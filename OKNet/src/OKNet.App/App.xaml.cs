@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using OKNet.App.ViewModel;
 using OKNet.Core;
 
 namespace OKNet.App
@@ -12,14 +14,7 @@ namespace OKNet.App
     {
         public App()
         {
-            var configService = new ConfigService();
-            var names = configService.GetNames("windows").ToList();
-            for (int i = 0; i < names.Count; i++)
-            {
-                var pathString = $"windows:{names[i]}";
-                Console.WriteLine(pathString);
-                var configuration = configService.GetConfig<WindowConfig>(pathString);
-            }
+            
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace OKNet.Core
+﻿using System;
+
+namespace OKNet.Core
 {
     public class WindowConfig
     {

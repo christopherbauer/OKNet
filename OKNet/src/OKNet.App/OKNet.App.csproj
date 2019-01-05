@@ -65,6 +65,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="GridHelpers.cs" />
+    <Compile Include="UriConverter.cs" />
+    <Compile Include="ViewModel\Design\WindowConfigViewModel.cs" />
+    <Compile Include="ViewModel\WindowConfigViewModel.cs" />
+    <Compile Include="WebBrowserBehaviors.cs" />
+    <Compile Include="WindowConfigConverter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -119,5 +125,6 @@
       <Name>OKNet.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

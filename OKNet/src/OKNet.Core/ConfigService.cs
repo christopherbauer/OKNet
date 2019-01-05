@@ -26,7 +26,7 @@ namespace OKNet.Core
 
         public T GetConfig<T>(string path) where T : new()
         {
-            var props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetProperty);
 
             var tReturn = new T();
             var collection = _simpleJsonConfigBuilder.GetAllValues(path);
