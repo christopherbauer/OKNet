@@ -41,12 +41,12 @@
     <Reference Include="Microsoft.Configuration.ConfigurationBuilders.Json, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Configuration.ConfigurationBuilders.Json.1.0.2\lib\Net471\Microsoft.Configuration.ConfigurationBuilders.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -65,12 +65,37 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ViewModel\Design\DesignBasicWebsiteViewModel.cs" />
+    <Compile Include="UserControl\BasicWebsiteView.xaml.cs">
+      <DependentUpon>BasicWebsiteView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\ComponentViewModel.cs" />
     <Compile Include="GridHelpers.cs" />
+    <Compile Include="JiraIconImageSourceService.cs" />
+    <Compile Include="UserControl\JiraView.xaml.cs">
+      <DependentUpon>JiraView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\IssueViewModel.cs" />
+    <Compile Include="ViewModel\ProjectViewModel.cs" />
     <Compile Include="UriConverter.cs" />
-    <Compile Include="ViewModel\Design\WindowConfigViewModel.cs" />
+    <Compile Include="UserControl\WebBrowserContainer.xaml.cs">
+      <DependentUpon>WebBrowserContainer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\BasicWebsiteViewModel.cs" />
+    <Compile Include="ViewModel\Design\DesignJiraViewModel.cs" />
+    <Compile Include="ViewModel\Design\DesignWebBrowserViewModel.cs" />
+    <Compile Include="ViewModel\Design\DesignWindowViewModel.cs" />
+    <Compile Include="ViewModel\JiraViewModel.cs" />
+    <Compile Include="ViewModel\ViewModelBase.cs" />
+    <Compile Include="ViewModel\WebBrowserViewModel.cs" />
     <Compile Include="ViewModel\WindowConfigViewModel.cs" />
+    <Compile Include="ViewModel\WindowViewModel.cs" />
     <Compile Include="WebBrowserBehaviors.cs" />
     <Compile Include="WindowConfigConverter.cs" />
+    <Page Include="UserControl\JiraView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -79,6 +104,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <None Include="appsettings.development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -86,6 +114,14 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UserControl\WebBrowserContainer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControl\BasicWebsiteView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -120,9 +156,17 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OKNet.Common\OKNet.Common.csproj">
+      <Project>{F9925D93-8C35-41BA-B122-99349C603D13}</Project>
+      <Name>OKNet.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OKNet.Core\OKNet.Core.csproj">
       <Project>{785D87EC-E75D-40E3-95CF-4D89D251133F}</Project>
       <Name>OKNet.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OKNet.Infrastructure.Jira\OKNet.Infrastructure.Jira.csproj">
+      <Project>{5EE0EE68-D407-4EB4-838E-1C7CCEBDF82F}</Project>
+      <Name>OKNet.Infrastructure.Jira</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

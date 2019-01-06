@@ -14,7 +14,6 @@ namespace OKNet.App
     {
         public App()
         {
-            
         }
     }
 }

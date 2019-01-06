@@ -32,7 +32,7 @@ namespace OKNet.Core
             var collection = _simpleJsonConfigBuilder.GetAllValues(path);
             foreach (var propertyInfo in props)
             {
-                propertyInfo.SetValue(tReturn, Enumerable.Single<KeyValuePair<string, string>>(collection, pair => string.Equals(pair.Key.Substring(path.Length + 1), propertyInfo.Name, StringComparison.CurrentCultureIgnoreCase)).Value);
+                propertyInfo.SetValue(tReturn, Enumerable.Single(collection, pair => string.Equals(pair.Key.Substring(path.Length + 1), propertyInfo.Name, StringComparison.CurrentCultureIgnoreCase)).Value);
             }
 
             return tReturn;
@@ -40,7 +40,7 @@ namespace OKNet.Core
 
         public IEnumerable<string> GetNames(string path)
         {
-            return Enumerable.Select<KeyValuePair<string, string>, string>(_simpleJsonConfigBuilder.GetAllValues(string.Empty), pair => pair.Key.Substring(path.Length).Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[0]).Distinct();
+            return Enumerable.Select(_simpleJsonConfigBuilder.GetAllValues(string.Empty), pair => pair.Key.Substring(path.Length).Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[0]).Distinct();
         }
 
         public T Get<T>(string keyPath)

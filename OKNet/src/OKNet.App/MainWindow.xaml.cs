@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using OKNet.App.ViewModel;
+using OKNet.Common;
 using OKNet.Core;
+using OKNet.Infrastructure.Jira;
+using Type = System.Type;
 
 namespace OKNet.App
 {
@@ -22,20 +18,71 @@ namespace OKNet.App
     /// </summary>
     public partial class MainWindow : Window
     {
+
         public MainWindow()
         {
-            InitializeComponent();
             var configService = new ConfigService();
+
             var names = configService.GetNames("windows").ToList();
-            var windows = new List<WindowConfig>();
+            var windowConfigViewModels = new List<ViewModelBase>();
             for (var i = 0; i < names.Count(); i++)
             {
                 var pathString = $"windows:{names[i]}";
                 Console.WriteLine(pathString);
-                windows.Add(configService.GetConfig<WindowConfig>(pathString));
+                var windowConfig = configService.GetConfig<WindowConfig>(pathString);
+                if (windowConfig.Type == "web")
+                {
+                    var websiteConfig = configService.GetConfig<WebsiteConfig>(pathString);
+                    windowConfigViewModels.Add(new BasicWebsiteViewModel
+                    {   
+                        Uri = websiteConfig.Uri,
+                        Type = websiteConfig.Type,
+                        Width = websiteConfig.Width,
+                        Height = websiteConfig.Height
+                    });
+                }
+                if (windowConfig.Type == "jira")
+                {
+                    var jiraConfig = configService.GetConfig<JiraConfig>(pathString);
+                    
+                    string url = $"https://{jiraConfig.ApiHost}";
+                    string apiBase = "/search";
+                    var jiraQuery = new JiraQuery().UpdatedSince(DateTime.Today).StatusCategoryIs("Done")
+                        .OrderBy("updated");
+
+                    var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"), jiraConfig.Username, jiraConfig.Password, jiraQuery.ToString());
+
+                    var projects = new ApiRequestService().MakeRequestWithBasicAuth<List<ProjectApiModel>>(new Uri($"{url}/project"), jiraConfig.Username, jiraConfig.Password, "");
+
+                    if (issueResult.StatusCode == 200)
+                    {
+                        var item = new JiraViewModel();
+                        item.Issues = new ObservableCollection<IssueViewModel>(issueResult.Data.issues.Select(
+                            model => new IssueViewModel
+                            {
+                                Key = model.key,
+                                Name = model.fields.summary,
+                                Component = new ObservableCollection<ComponentViewModel>(
+                                    model.fields.components.Select(component => new ComponentViewModel
+                                    {
+                                        Id = Convert.ToInt32(component.id), Name = component.name
+                                    })),
+                                ProjectId = Convert.ToInt32(model.fields.project.id)
+                            }));
+                        item.Projects = new ObservableCollection<ProjectViewModel>(projects.Data.Select(model =>
+                            new ProjectViewModel
+                            {
+                                Name = model.name, Key = model.key, Id = Convert.ToInt32(model.id)
+                            }));
+                        item.RefreshProjectCounts();
+                        windowConfigViewModels.Add(item);
+                    }
+                }
+
             }
 
-            DataContext = new WindowConfigViewModel { Windows = windows };
+            DataContext = new WindowViewModel { Windows = windowConfigViewModels };
+            InitializeComponent();
         }
     }
 }

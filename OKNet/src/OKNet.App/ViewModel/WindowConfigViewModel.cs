@@ -1,11 +1,26 @@
-﻿using System.Collections.Generic;
-using OKNet.Core;
-
-namespace OKNet.App.ViewModel
+﻿namespace OKNet.App.ViewModel
 {
-    public class WindowConfigViewModel
+    public abstract class WindowConfigViewModel : ViewModelBase
     {
-        public int ColumnCount => Windows.Count;
-        public List<WindowConfig> Windows { get; set; }
+        private string _type;
+        private string _height;
+        private string _width;
+        public string Width
+        {
+            get => _width;
+            set => SetValue(ref _width, value);
+        }
+
+        public string Height
+        {
+            get => _height;
+            set => SetValue(ref _height, value);
+        }
+
+        public string Type
+        {
+            get => _type;
+            set => SetValue(ref _type, value);
+        }
     }
 }

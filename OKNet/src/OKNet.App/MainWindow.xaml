@@ -5,19 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OKNet.App"
         xmlns:viewModel="clr-namespace:OKNet.App.ViewModel"
+        xmlns:design="clr-namespace:OKNet.App.ViewModel.Design"
+        xmlns:userControl="clr-namespace:OKNet.App.UserControl"
         mc:Ignorable="d"
-        Title="MainWindow" WindowState="Maximized" WindowStartupLocation="CenterScreen" WindowStyle="SingleBorderWindow" d:DataContext="{d:DesignInstance viewModel:DesignWindowConfigViewModel, IsDesignTimeCreatable=True}">
+        Title="MainWindow" WindowState="Maximized" WindowStartupLocation="CenterScreen" WindowStyle="SingleBorderWindow"
+        d:DataContext="{d:DesignInstance design:DesignWindowViewModel, IsDesignTimeCreatable=True}" d:DesignWidth="1600">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type viewModel:JiraViewModel}">
+            <userControl:JiraView></userControl:JiraView>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:BasicWebsiteViewModel}">
+            <userControl:BasicWebsiteView></userControl:BasicWebsiteView>
+        </DataTemplate>
+    </Window.Resources>
     <ItemsControl ItemsSource="{Binding Windows}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <StackPanel Orientation="Horizontal"/>
+                <StackPanel Orientation="Horizontal" />
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <DockPanel Width="800px" LastChildFill="True">
-                    <WebBrowser local:WebBrowserUtility.BindableSource="{Binding Uri}" />
-                </DockPanel>
+                <ContentControl Content="{Binding}">
+                </ContentControl>
             </DataTemplate>
         </ItemsControl.ItemTemplate>
     </ItemsControl>
