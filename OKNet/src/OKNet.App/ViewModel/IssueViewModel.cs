@@ -1,5 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
+using Humanizer;
+using Humanizer.DateTimeHumanizeStrategy;
 
 namespace OKNet.App.ViewModel
 {
@@ -9,6 +12,10 @@ namespace OKNet.App.ViewModel
         private string _key;
         private ObservableCollection<ComponentViewModel> _component;
         private int _projectId;
+        private DateTime _updated;
+
+        public string GetComponent => string.Join(",", Component.Select(model => model.Name));
+        public string GetUpdatedHumanReadable => Updated.Humanize();
 
         public string Name
         {
@@ -34,6 +41,10 @@ namespace OKNet.App.ViewModel
             set => SetValue(ref _projectId, value);
         }
 
-        public string GetComponent => string.Join(",", Component.Select(model => model.Name));
+        public DateTime Updated
+        {
+            get => _updated;
+            set => SetValue(ref _updated, value);
+        }
     }
 }

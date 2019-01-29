@@ -47,7 +47,7 @@ namespace OKNet.App
                     
                     string url = $"https://{jiraConfig.ApiHost}";
                     string apiBase = "/search";
-                    var jiraQuery = new JiraQuery().UpdatedSince(DateTime.Today).StatusCategoryIs("Done")
+                    var jiraQuery = new JiraQuery().ResolvedSince(DateTime.Today).StatusCategoryIs("Done")
                         .OrderBy("updated");
 
                     var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"), jiraConfig.Username, jiraConfig.Password, jiraQuery.ToString());
@@ -56,8 +56,7 @@ namespace OKNet.App
 
                     if (issueResult.StatusCode == 200)
                     {
-                        var item = new JiraViewModel();
-                        item.Issues = new ObservableCollection<IssueViewModel>(issueResult.Data.issues.Select(
+                        var issueViewModels = issueResult.Data.issues.Select(
                             model => new IssueViewModel
                             {
                                 Key = model.key,
@@ -65,15 +64,25 @@ namespace OKNet.App
                                 Component = new ObservableCollection<ComponentViewModel>(
                                     model.fields.components.Select(component => new ComponentViewModel
                                     {
-                                        Id = Convert.ToInt32(component.id), Name = component.name
+                                        Id = Convert.ToInt32(component.id),
+                                        Name = component.name
                                     })),
-                                ProjectId = Convert.ToInt32(model.fields.project.id)
-                            }));
-                        item.Projects = new ObservableCollection<ProjectViewModel>(projects.Data.Select(model =>
-                            new ProjectViewModel
-                            {
-                                Name = model.name, Key = model.key, Id = Convert.ToInt32(model.id)
-                            }));
+                                ProjectId = Convert.ToInt32(model.fields.project.id),
+                                Updated = model.fields.updated
+                            });
+                        var item = new JiraViewModel
+                        {
+                            Width = jiraConfig.Width,
+                            Height = jiraConfig.Height,
+                            Projects = new ObservableCollection<ProjectViewModel>(projects.Data.Select(model =>
+                                new ProjectViewModel
+                                {
+                                    Name = model.name,
+                                    Key = model.key,
+                                    Id = Convert.ToInt32(model.id)
+                                }))
+                        };
+                        item.AddNewIssues(issueViewModels);
                         item.RefreshProjectCounts();
                         windowConfigViewModels.Add(item);
                     }

@@ -29,7 +29,7 @@ namespace OKNet.Infrastructure.Jira
         public object[] fixVersions { get; set; }
         public int? aggregatetimespent { get; set; }
         public Resolution resolution { get; set; }
-        public DateTime resolutiondate { get; set; }
+        public DateTime? resolutiondate { get; set; }
         public long workratio { get; set; }
         public Watches watches { get; set; }
         public object lastViewed { get; set; }

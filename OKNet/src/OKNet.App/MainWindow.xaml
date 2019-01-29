@@ -8,7 +8,7 @@
         xmlns:design="clr-namespace:OKNet.App.ViewModel.Design"
         xmlns:userControl="clr-namespace:OKNet.App.UserControl"
         mc:Ignorable="d"
-        Title="MainWindow" WindowState="Maximized" WindowStartupLocation="CenterScreen" WindowStyle="SingleBorderWindow"
+        Title="MainWindow" WindowState="Maximized" WindowStartupLocation="CenterScreen" WindowStyle="None"
         d:DataContext="{d:DesignInstance design:DesignWindowViewModel, IsDesignTimeCreatable=True}" d:DesignWidth="1600">
     <Window.Resources>
         <DataTemplate DataType="{x:Type viewModel:JiraViewModel}">

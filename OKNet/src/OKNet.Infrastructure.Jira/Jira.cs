@@ -21,6 +21,10 @@ namespace OKNet.Infrastructure.Jira
         {
             return query.Add($"updated>={time:yyyy-MM-dd}");
         }
+        public static JiraQuery ResolvedSince(this JiraQuery query, DateTime time)
+        {
+            return query.Add($"resolutiondate>={time:yyyy-MM-dd}");
+        }
         public static JiraQuery StatusCategoryIs(this JiraQuery query, string category)
         {
             return query.Add($"statusCategory={category}");

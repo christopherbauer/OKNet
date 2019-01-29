@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Humanizer, Version=2.5.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Humanizer.Core.2.5.16\lib\netstandard2.0\Humanizer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Configuration.ConfigurationBuilders.Base, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Configuration.ConfigurationBuilders.Base.1.0.1\lib\Net471\Microsoft.Configuration.ConfigurationBuilders.Base.dll</HintPath>
     </Reference>
@@ -65,6 +68,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DesignIssueViewModel.cs" />
+    <Compile Include="IssueView.xaml.cs">
+      <DependentUpon>IssueView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectView.xaml.cs">
+      <DependentUpon>ProjectView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\Design\DesignBasicWebsiteViewModel.cs" />
     <Compile Include="UserControl\BasicWebsiteView.xaml.cs">
       <DependentUpon>BasicWebsiteView.xaml</DependentUpon>
@@ -75,6 +85,7 @@
     <Compile Include="UserControl\JiraView.xaml.cs">
       <DependentUpon>JiraView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\Design\DesignProjectViewModel.cs" />
     <Compile Include="ViewModel\IssueViewModel.cs" />
     <Compile Include="ViewModel\ProjectViewModel.cs" />
     <Compile Include="UriConverter.cs" />
@@ -92,6 +103,14 @@
     <Compile Include="ViewModel\WindowViewModel.cs" />
     <Compile Include="WebBrowserBehaviors.cs" />
     <Compile Include="WindowConfigConverter.cs" />
+    <Page Include="IssueView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ProjectView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UserControl\JiraView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
