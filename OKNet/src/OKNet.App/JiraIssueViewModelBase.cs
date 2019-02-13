@@ -6,10 +6,11 @@ using OKNet.App.ViewModel;
 
 namespace OKNet.App
 {
-    public class JiraInProgressIssueViewModel : WindowConfigViewModel
+    public class JiraIssueViewModelBase : WindowConfigViewModel
     {
-        private ObservableCollection<ProjectViewModel> _projects;
-        private ObservableCollection<IssueViewModel> _issues = new ObservableCollection<IssueViewModel>();
+        protected ObservableCollection<IssueViewModel> _issues = new ObservableCollection<IssueViewModel>();
+        protected ObservableCollection<ProjectViewModel> _projects;
+        public int IssuesTotal { get; set; }
 
         public ObservableCollection<IssueViewModel> Issues
         {
@@ -23,13 +24,10 @@ namespace OKNet.App
             set
             {
                 SetValue(ref _projects, value);
-                OnPropertyChanged(nameof(GetVisibleProjects));
+                OnPropertyChanged(nameof(JiraInProgressIssueViewModel.GetVisibleProjects));
             }
         }
 
-        public ObservableCollection<ProjectViewModel> GetVisibleProjects => new ObservableCollection<ProjectViewModel>(Projects.ToList());
-        public int IssueCount => Issues.Count;
-        public string GetIssue => $"{IssueCount} issue(s) In Progress";
         public void RefreshProjectCounts()
         {
             foreach (var projectViewModel in Projects)
@@ -46,6 +44,5 @@ namespace OKNet.App
                 Issues.Add(issueViewModel);
             }
         }
-
     }
 }

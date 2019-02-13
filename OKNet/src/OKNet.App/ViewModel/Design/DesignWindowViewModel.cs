@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace OKNet.App.ViewModel.Design
 {
@@ -6,11 +7,11 @@ namespace OKNet.App.ViewModel.Design
     {
         public DesignWindowViewModel()
         {
-            Windows = new List<ViewModelBase>
+            Windows = new ObservableCollection<ViewModelBase>(new List<ViewModelBase>
             {
                 new DesignJiraCompletedIssueViewModel(),
                 new DesignJiraInProgressIssueViewModel(),
-            };
+            });
         }
     }
 }

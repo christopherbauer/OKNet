@@ -14,7 +14,7 @@
         <DataTemplate DataType="{x:Type viewModel:JiraCompletedIssueViewModel}">
             <userControl:JiraCompletedIssueView></userControl:JiraCompletedIssueView>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type local:JiraInProgressIssueViewModel}">
+        <DataTemplate DataType="{x:Type viewModel:JiraInProgressIssueViewModel}">
             <userControl:JiraInProgressIssueView></userControl:JiraInProgressIssueView>
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:BasicWebsiteViewModel}">

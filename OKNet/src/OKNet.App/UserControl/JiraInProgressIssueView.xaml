@@ -23,7 +23,7 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <ItemsControl ItemsSource="{Binding Issues}" Width="{Binding Width}" Padding="10,0,10,0">
+            <ItemsControl ItemsSource="{Binding GetVisibleIssues}" Width="{Binding Width}" Padding="10,0,10,0">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Vertical"></StackPanel>

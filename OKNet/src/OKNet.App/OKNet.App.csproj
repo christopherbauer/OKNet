@@ -75,7 +75,8 @@
     <Compile Include="IssueView.xaml.cs">
       <DependentUpon>IssueView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="JiraInProgressIssueViewModel.cs" />
+    <Compile Include="JiraApiService.cs" />
+    <Compile Include="JiraIssueViewModelBase.cs" />
     <Compile Include="ProjectView.xaml.cs">
       <DependentUpon>ProjectView.xaml</DependentUpon>
     </Compile>
@@ -95,6 +96,7 @@
     <Compile Include="ViewModel\Design\DesignJiraInProgressIssueViewModel.cs" />
     <Compile Include="ViewModel\Design\DesignProjectViewModel.cs" />
     <Compile Include="ViewModel\IssueViewModel.cs" />
+    <Compile Include="ViewModel\JiraInProgressIssueViewModel.cs" />
     <Compile Include="ViewModel\ProjectViewModel.cs" />
     <Compile Include="UriConverter.cs" />
     <Compile Include="UserControl\WebBrowserContainer.xaml.cs">
