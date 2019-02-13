@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using OKNet.App.ViewModel;
 
@@ -9,6 +10,7 @@ namespace OKNet.App
         public DesignIssueViewModel()
         {
             Key = "RATES-1";
+            Status = "In Dev";
             StatusCategory = "In Development";
             Name = "Create Nightly Rate Plan";
             ProjectId = 2;
