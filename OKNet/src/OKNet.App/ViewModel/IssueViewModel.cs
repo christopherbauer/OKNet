@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Humanizer;
@@ -13,9 +14,12 @@ namespace OKNet.App.ViewModel
         private int _projectId;
         private DateTime _updated;
         private string _statusCategory;
+        private string _status;
 
         public string GetComponent => string.Join(",", Component.Select(model => model.Name));
-        public string GetUpdatedHumanReadable => Updated.Humanize();
+
+        public string GetUpdatedHumanReadable => Updated.Humanize(false);
+        public string StatusColor => StatusColorDictionary.ContainsKey(Status) ? StatusColorDictionary[Status] : "Silver";
 
 
         public string Name
@@ -53,5 +57,23 @@ namespace OKNet.App.ViewModel
             get => _statusCategory;
             set => SetValue(ref _statusCategory, value);
         }
+
+        public string Status
+        {
+            get => _status;
+            set => SetValue(ref _status, value);
+        }
+
+        public Dictionary<string, string> StatusColorDictionary => new Dictionary<string, string>
+        {
+            { "To Do", "Silver" },
+            { "Ready for dev", "Silver" },
+            { "In Dev", "LightGreen" },
+            { "Code Review", "LimeGreen" },
+            { "Ready for QA", "PaleGoldenrod" },
+            { "In QA", "Gold" },
+            { "PM review", "LightSkyBlue" },
+            { "Ready for business", "LightSkyBlue" },
+        };
     }
 }

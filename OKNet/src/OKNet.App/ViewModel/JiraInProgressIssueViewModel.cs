@@ -19,6 +19,6 @@ namespace OKNet.App.ViewModel
             }
         }
 
-        public ObservableCollection<IssueViewModel> GetVisibleIssues => new ObservableCollection<IssueViewModel>(Issues.Skip(Page*50).Take(50));
+        public ObservableCollection<IssueViewModel> GetVisibleIssues => new ObservableCollection<IssueViewModel>(Issues.OrderByDescending(model => model.Updated).Skip(Page*50).Take(50));
     }
 }

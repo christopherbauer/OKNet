@@ -24,6 +24,7 @@ namespace OKNet.App
                             Name = component.name
                         })),
                     StatusCategory = model.fields.status.statusCategory.name,
+                    Status = model.fields.status.name,
                     ProjectId = Convert.ToInt32(model.fields.project.id),
                     Updated = model.fields.updated
                 });

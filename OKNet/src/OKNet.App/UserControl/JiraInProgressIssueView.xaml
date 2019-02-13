@@ -9,7 +9,7 @@
      d:DataContext="{d:DesignInstance design:DesignJiraInProgressIssueViewModel, IsDesignTimeCreatable=True}" Background="White">
     <Viewbox MaxWidth="{Binding Width}">
         <StackPanel Orientation="Vertical">
-            <TextBlock Text="JIRA In Progress Issues" FontSize="22px" HorizontalAlignment="Center"></TextBlock>
+            <TextBlock Text="JIRA In Progress (Last 30d) Issues" FontSize="22px" HorizontalAlignment="Center"></TextBlock>
             <TextBlock Text="{Binding GetIssue}" FontSize="16px" Margin="10,0,0,0"></TextBlock>
             <ItemsControl  ItemsSource="{Binding GetVisibleProjects}" Width="{Binding Width}" Margin="5,5,5,5">
                 <ItemsControl.ItemsPanel>

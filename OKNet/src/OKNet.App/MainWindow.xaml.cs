@@ -56,8 +56,7 @@ namespace OKNet.App
                     string url = $"https://{jiraConfig.ApiHost}";
                     string apiBase = "/search";
 
-                    var jiraQuery = new JiraQuery().StatusCategoryIs(JiraStatusCategory.IN_PROGRESS).OrderBy("updated");
-
+                    var jiraQuery = new JiraQuery().StatusCategoryIs(JiraStatusCategory.IN_PROGRESS).UpdatedSince(-30, JiraTimeDifference.Days).OrderBy("updated");
 
                     var jiraConfigPassword = Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password));
 
