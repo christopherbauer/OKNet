@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using Humanizer;
-using Humanizer.DateTimeHumanizeStrategy;
 
 namespace OKNet.App.ViewModel
 {
@@ -13,9 +12,11 @@ namespace OKNet.App.ViewModel
         private ObservableCollection<ComponentViewModel> _component;
         private int _projectId;
         private DateTime _updated;
+        private string _statusCategory;
 
         public string GetComponent => string.Join(",", Component.Select(model => model.Name));
         public string GetUpdatedHumanReadable => Updated.Humanize();
+
 
         public string Name
         {
@@ -45,6 +46,12 @@ namespace OKNet.App.ViewModel
         {
             get => _updated;
             set => SetValue(ref _updated, value);
+        }
+
+        public string StatusCategory
+        {
+            get => _statusCategory;
+            set => SetValue(ref _statusCategory, value);
         }
     }
 }

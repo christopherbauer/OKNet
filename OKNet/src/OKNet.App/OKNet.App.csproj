@@ -69,11 +69,18 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DesignIssueViewModel.cs" />
+    <Compile Include="IssueStatusView.xaml.cs">
+      <DependentUpon>IssueStatusView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="IssueView.xaml.cs">
       <DependentUpon>IssueView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="JiraInProgressIssueViewModel.cs" />
     <Compile Include="ProjectView.xaml.cs">
       <DependentUpon>ProjectView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControl\JiraInProgressIssueView.xaml.cs">
+      <DependentUpon>JiraInProgressIssueView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\Design\DesignBasicWebsiteViewModel.cs" />
     <Compile Include="UserControl\BasicWebsiteView.xaml.cs">
@@ -82,9 +89,10 @@
     <Compile Include="ViewModel\ComponentViewModel.cs" />
     <Compile Include="GridHelpers.cs" />
     <Compile Include="JiraIconImageSourceService.cs" />
-    <Compile Include="UserControl\JiraView.xaml.cs">
-      <DependentUpon>JiraView.xaml</DependentUpon>
+    <Compile Include="UserControl\JiraCompletedIssueView.xaml.cs">
+      <DependentUpon>JiraCompletedIssueView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\Design\DesignJiraInProgressIssueViewModel.cs" />
     <Compile Include="ViewModel\Design\DesignProjectViewModel.cs" />
     <Compile Include="ViewModel\IssueViewModel.cs" />
     <Compile Include="ViewModel\ProjectViewModel.cs" />
@@ -93,16 +101,20 @@
       <DependentUpon>WebBrowserContainer.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\BasicWebsiteViewModel.cs" />
-    <Compile Include="ViewModel\Design\DesignJiraViewModel.cs" />
+    <Compile Include="ViewModel\Design\DesignJiraCompletedIssueViewModel.cs" />
     <Compile Include="ViewModel\Design\DesignWebBrowserViewModel.cs" />
     <Compile Include="ViewModel\Design\DesignWindowViewModel.cs" />
-    <Compile Include="ViewModel\JiraViewModel.cs" />
+    <Compile Include="ViewModel\JiraCompletedIssueViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="ViewModel\WebBrowserViewModel.cs" />
     <Compile Include="ViewModel\WindowConfigViewModel.cs" />
     <Compile Include="ViewModel\WindowViewModel.cs" />
     <Compile Include="WebBrowserBehaviors.cs" />
     <Compile Include="WindowConfigConverter.cs" />
+    <Page Include="IssueStatusView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="IssueView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -111,7 +123,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UserControl\JiraView.xaml">
+    <Page Include="UserControl\JiraCompletedIssueView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -133,6 +145,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UserControl\JiraInProgressIssueView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UserControl\WebBrowserContainer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
