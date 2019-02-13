@@ -7,6 +7,9 @@ using OKNet.Infrastructure.Jira;
 
 namespace OKNet.App
 {
+    /// <summary>
+    /// Jira icons are in svg format, can't be displayed as bitmap/et al
+    /// </summary>
     public class JiraIconImageSourceService
     {
         private object @object = new object();

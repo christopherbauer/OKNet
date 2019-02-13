@@ -8,17 +8,17 @@ namespace OKNet.App
 {
     public class JiraIssueViewModelBase : WindowConfigViewModel
     {
-        protected ObservableCollection<IssueViewModel> _issues = new ObservableCollection<IssueViewModel>();
-        protected ObservableCollection<ProjectViewModel> _projects;
+        protected ObservableCollection<JiraIssueViewModel> _issues = new ObservableCollection<JiraIssueViewModel>();
+        protected ObservableCollection<JiraProjectViewModel> _projects;
         public int IssuesTotal { get; set; }
 
-        public ObservableCollection<IssueViewModel> Issues
+        public ObservableCollection<JiraIssueViewModel> Issues
         {
             get => _issues;
             set => SetValue(ref _issues, value);
         }
 
-        public ObservableCollection<ProjectViewModel> Projects
+        public ObservableCollection<JiraProjectViewModel> Projects
         {
             get { return _projects; }
             set
@@ -36,7 +36,7 @@ namespace OKNet.App
             }
         }
 
-        public void AddNewIssues(IEnumerable<IssueViewModel> issueViewModels)
+        public void AddNewIssues(IEnumerable<JiraIssueViewModel> issueViewModels)
         {
             var newIssues = issueViewModels.OrderByDescending(model => model.Updated).Where(model => Issues.All(viewModel => viewModel.Key != model.Key));
             foreach (var issueViewModel in newIssues)

@@ -1,6 +1,6 @@
 namespace OKNet.App.ViewModel.Design
 {
-    public class DesignProjectViewModel : ProjectViewModel
+    public class DesignProjectViewModel : JiraProjectViewModel
     {
         public DesignProjectViewModel()
         {

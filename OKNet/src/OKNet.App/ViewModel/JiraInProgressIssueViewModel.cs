@@ -6,7 +6,7 @@ namespace OKNet.App.ViewModel
     public class JiraInProgressIssueViewModel : JiraIssueViewModelBase
     {
         private int _page;
-        public ObservableCollection<ProjectViewModel> GetVisibleProjects => new ObservableCollection<ProjectViewModel>(Projects.ToList());
+        public ObservableCollection<JiraProjectViewModel> GetVisibleProjects => new ObservableCollection<JiraProjectViewModel>(Projects.ToList());
         public string GetIssue => $"{IssuesTotal} issue(s) In Progress";
 
         public int Page
@@ -19,6 +19,6 @@ namespace OKNet.App.ViewModel
             }
         }
 
-        public ObservableCollection<IssueViewModel> GetVisibleIssues => new ObservableCollection<IssueViewModel>(Issues.OrderByDescending(model => model.Updated).Skip(Page*50).Take(50));
+        public ObservableCollection<JiraIssueViewModel> GetVisibleIssues => new ObservableCollection<JiraIssueViewModel>(Issues.OrderByDescending(model => model.Updated).Skip(Page*50).Take(50));
     }
 }

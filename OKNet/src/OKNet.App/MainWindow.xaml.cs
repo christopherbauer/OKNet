@@ -79,7 +79,7 @@ namespace OKNet.App
                     var startAt = 0;
                     while (!lastPage)
                     {
-                        var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"), jiraConfig.Username, jiraConfigPassword, jiraQuery.ToString(), startAt);
+                        var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"), jiraConfig.Username, jiraConfigPassword, $"{jiraQuery}&startAt={startAt}");
                         if (issueResult.StatusCode == 200)
                         {
                             viewModel.IssuesTotal = issueResult.Data.total;
@@ -119,8 +119,8 @@ namespace OKNet.App
                         {
                             Width = jiraConfig.Width,
                             Height = jiraConfig.Height,
-                            Projects = new ObservableCollection<ProjectViewModel>(projects.Data.Select(model =>
-                                new ProjectViewModel
+                            Projects = new ObservableCollection<JiraProjectViewModel>(projects.Data.Select(model =>
+                                new JiraProjectViewModel
                                 {
                                     Name = model.name,
                                     Key = model.key,

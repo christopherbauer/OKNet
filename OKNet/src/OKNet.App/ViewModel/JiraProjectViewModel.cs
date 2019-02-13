@@ -2,7 +2,7 @@
 
 namespace OKNet.App.ViewModel
 {
-    public class ProjectViewModel : ViewModelBase
+    public class JiraProjectViewModel : ViewModelBase
     {
         public string Name { get; set; }
         public string Key { get; set; }

@@ -6,7 +6,7 @@ using Humanizer;
 
 namespace OKNet.App.ViewModel
 {
-    public class IssueViewModel : ViewModelBase
+    public class JiraIssueViewModel : ViewModelBase
     {
         private string _name;
         private string _key;

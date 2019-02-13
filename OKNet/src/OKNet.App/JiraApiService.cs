@@ -8,12 +8,12 @@ using OKNet.Infrastructure.Jira;
 
 namespace OKNet.App
 {
-    public class JiraApiService
-    {
-        public IEnumerable<IssueViewModel> ParseIssues(ApiResponse<APIIssueRequestRoot> issueResult)
+    public class JiraApiService : ApiRequestService
+    {   
+        public IEnumerable<JiraIssueViewModel> ParseIssues(ApiResponse<APIIssueRequestRoot> issueResult)
         {
             return issueResult.Data.issues.Select(
-                model => new IssueViewModel
+                model => new JiraIssueViewModel
                 {
                     Key = model.key,
                     Name = model.fields.summary,
@@ -30,20 +30,15 @@ namespace OKNet.App
                 });
         }
 
-        public static ObservableCollection<ProjectViewModel> ParseProjects(ApiResponse<List<ProjectApiModel>> projects)
+        public static ObservableCollection<JiraProjectViewModel> ParseProjects(ApiResponse<List<ProjectApiModel>> projects)
         {
-            return new ObservableCollection<ProjectViewModel>(projects.Data.Select(model =>
-                new ProjectViewModel
+            return new ObservableCollection<JiraProjectViewModel>(projects.Data.Select(model =>
+                new JiraProjectViewModel
                 {
                     Name = model.name,
                     Key = model.key,
                     Id = Convert.ToInt32(model.id)
                 }));
-        }
-
-        public static int GetTotalIssues(ApiResponse<APIIssueRequestRoot> issueResult)
-        {
-            return issueResult.Data.total;
         }
     }
 }

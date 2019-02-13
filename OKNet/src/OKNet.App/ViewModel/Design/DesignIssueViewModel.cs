@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using OKNet.App.ViewModel;
 
-namespace OKNet.App
+namespace OKNet.App.ViewModel.Design
 {
-    public class DesignIssueViewModel : IssueViewModel
+    public class DesignIssueViewModel : JiraIssueViewModel
     {
         public DesignIssueViewModel()
         {
