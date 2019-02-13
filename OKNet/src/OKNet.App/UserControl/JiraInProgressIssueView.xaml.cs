@@ -1,8 +1,8 @@
 namespace OKNet.App.UserControl
 {
-    public partial class JiraView
+    public partial class JiraInProgressIssueView
     {
-        public JiraView()
+        public JiraInProgressIssueView()
         {
             InitializeComponent();
         }

@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using OKNet.App.ViewModel;
 using OKNet.Common;
 using OKNet.Core;
 using OKNet.Infrastructure.Jira;
-using Type = System.Type;
 
 namespace OKNet.App
 {
@@ -41,13 +38,58 @@ namespace OKNet.App
                         Height = websiteConfig.Height
                     });
                 }
-                if (windowConfig.Type == "jira")
+                if (windowConfig.Type == "jira-inprogress")
                 {
                     var jiraConfig = configService.GetConfig<JiraConfig>(pathString);
                     
                     string url = $"https://{jiraConfig.ApiHost}";
                     string apiBase = "/search";
-                    var jiraQuery = new JiraQuery().ResolvedSince(DateTime.Today).StatusCategoryIs("Done")
+                    var jiraQuery = new JiraQuery().StatusCategoryIn(new List<JiraStatusCategory> {JiraStatusCategory.TO_DO,JiraStatusCategory.IN_PROGRESS}).OrderBy("updated");
+
+                    var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"), jiraConfig.Username, jiraConfig.Password, jiraQuery.ToString());
+
+                    var projects = new ApiRequestService().MakeRequestWithBasicAuth<List<ProjectApiModel>>(new Uri($"{url}/project"), jiraConfig.Username, jiraConfig.Password, "");
+
+                    if (issueResult.StatusCode == 200)
+                    {
+                        var issueViewModels = issueResult.Data.issues.Select(
+                            model => new IssueViewModel
+                            {
+                                Key = model.key,
+                                Name = model.fields.summary,
+                                Component = new ObservableCollection<ComponentViewModel>(
+                                    model.fields.components.Select(component => new ComponentViewModel
+                                    {
+                                        Id = Convert.ToInt32(component.id),
+                                        Name = component.name
+                                    })),
+                                ProjectId = Convert.ToInt32(model.fields.project.id),
+                                Updated = model.fields.updated
+                            });
+                        var item = new JiraInProgressIssueViewModel
+                        {
+                            Width = jiraConfig.Width,
+                            Height = jiraConfig.Height,
+                            Projects = new ObservableCollection<ProjectViewModel>(projects.Data.Select(model =>
+                                new ProjectViewModel
+                                {
+                                    Name = model.name,
+                                    Key = model.key,
+                                    Id = Convert.ToInt32(model.id)
+                                }))
+                        };
+                        item.AddNewIssues(issueViewModels);
+                        item.RefreshProjectCounts();
+                        windowConfigViewModels.Add(item);
+                    }
+                }
+                if (windowConfig.Type == "jira-complete")
+                {
+                    var jiraConfig = configService.GetConfig<JiraConfig>(pathString);
+                    
+                    string url = $"https://{jiraConfig.ApiHost}";
+                    string apiBase = "/search";
+                    var jiraQuery = new JiraQuery().ResolvedSince(DateTime.Today).StatusCategoryIs(JiraStatusCategory.COMPLETE)
                         .OrderBy("updated");
 
                     var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"), jiraConfig.Username, jiraConfig.Password, jiraQuery.ToString());
@@ -70,7 +112,7 @@ namespace OKNet.App
                                 ProjectId = Convert.ToInt32(model.fields.project.id),
                                 Updated = model.fields.updated
                             });
-                        var item = new JiraViewModel
+                        var item = new JiraCompletedIssueViewModel
                         {
                             Width = jiraConfig.Width,
                             Height = jiraConfig.Height,

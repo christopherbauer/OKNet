@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
+using OKNet.App.ViewModel;
 
-namespace OKNet.App.ViewModel
+namespace OKNet.App
 {
-    public class JiraViewModel : WindowConfigViewModel
+    public class JiraInProgressIssueViewModel : WindowConfigViewModel
     {
         private ObservableCollection<ProjectViewModel> _projects;
         private ObservableCollection<IssueViewModel> _issues = new ObservableCollection<IssueViewModel>();
@@ -27,9 +27,9 @@ namespace OKNet.App.ViewModel
             }
         }
 
-        public ObservableCollection<ProjectViewModel> GetVisibleProjects => new ObservableCollection<ProjectViewModel>(Projects.Where(model => model.CountCompleted > 0).ToList());
+        public ObservableCollection<ProjectViewModel> GetVisibleProjects => new ObservableCollection<ProjectViewModel>(Projects.ToList());
         public int IssueCount => Issues.Count;
-        public string GetIssue => $"{IssueCount} issue(s) Done today";
+        public string GetIssue => $"{IssueCount} issue(s) In Progress";
         public void RefreshProjectCounts()
         {
             foreach (var projectViewModel in Projects)
@@ -46,5 +46,6 @@ namespace OKNet.App.ViewModel
                 Issues.Add(issueViewModel);
             }
         }
+
     }
 }

@@ -8,8 +8,8 @@ namespace OKNet.App.ViewModel.Design
         {
             Windows = new List<ViewModelBase>
             {
-                new DesignJiraViewModel(),
-                new DesignBasicWebsiteViewModel(),
+                new DesignJiraCompletedIssueViewModel(),
+                new DesignJiraInProgressIssueViewModel(),
             };
         }
     }

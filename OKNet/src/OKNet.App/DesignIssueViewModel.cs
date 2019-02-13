@@ -9,6 +9,7 @@ namespace OKNet.App
         public DesignIssueViewModel()
         {
             Key = "RATES-1";
+            StatusCategory = "In Development";
             Name = "Create Nightly Rate Plan";
             ProjectId = 2;
             Component = new ObservableCollection<ComponentViewModel>

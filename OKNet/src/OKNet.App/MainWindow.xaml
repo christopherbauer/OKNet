@@ -11,8 +11,11 @@
         Title="MainWindow" WindowState="Maximized" WindowStartupLocation="CenterScreen" WindowStyle="None"
         d:DataContext="{d:DesignInstance design:DesignWindowViewModel, IsDesignTimeCreatable=True}" d:DesignWidth="1600">
     <Window.Resources>
-        <DataTemplate DataType="{x:Type viewModel:JiraViewModel}">
-            <userControl:JiraView></userControl:JiraView>
+        <DataTemplate DataType="{x:Type viewModel:JiraCompletedIssueViewModel}">
+            <userControl:JiraCompletedIssueView></userControl:JiraCompletedIssueView>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type local:JiraInProgressIssueViewModel}">
+            <userControl:JiraInProgressIssueView></userControl:JiraInProgressIssueView>
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:BasicWebsiteViewModel}">
             <userControl:BasicWebsiteView></userControl:BasicWebsiteView>

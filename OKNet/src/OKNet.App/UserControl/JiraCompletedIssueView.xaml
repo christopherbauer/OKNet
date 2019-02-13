@@ -1,0 +1,40 @@
+<UserControl x:Class="OKNet.App.UserControl.JiraCompletedIssueView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:design="clr-namespace:OKNet.App.ViewModel.Design"
+    xmlns:app="clr-namespace:OKNet.App"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance design:DesignJiraCompletedIssueViewModel, IsDesignTimeCreatable=True}" Background="White">
+    <Viewbox MaxWidth="{Binding Width}">
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="JIRA Recently Completed Issues" FontSize="22px" HorizontalAlignment="Center"></TextBlock>
+            <TextBlock Text="{Binding GetIssue}" FontSize="16px" Margin="10,0,0,0"></TextBlock>
+            <ItemsControl  ItemsSource="{Binding GetVisibleProjects}" Width="{Binding Width}" Margin="5,5,5,5">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel></WrapPanel>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <app:ProjectView/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <ItemsControl ItemsSource="{Binding Issues}" Width="{Binding Width}" Padding="10,0,10,0">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical"></StackPanel>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <app:IssueView/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </Viewbox>
+</UserControl>

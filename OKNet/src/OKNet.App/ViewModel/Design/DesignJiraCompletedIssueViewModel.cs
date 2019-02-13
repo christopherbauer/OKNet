@@ -4,9 +4,9 @@ using System.Collections.ObjectModel;
 
 namespace OKNet.App.ViewModel.Design
 {
-    public class DesignJiraViewModel : JiraViewModel
+    public class DesignJiraCompletedIssueViewModel : JiraCompletedIssueViewModel
     {
-        public DesignJiraViewModel()
+        public DesignJiraCompletedIssueViewModel()
         {
             Width = "800";
             Height = "800";

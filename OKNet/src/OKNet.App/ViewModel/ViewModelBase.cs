@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using OKNet.Core.Annotations;
 
 namespace OKNet.App.ViewModel
 {
