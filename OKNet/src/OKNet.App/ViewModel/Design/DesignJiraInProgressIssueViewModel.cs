@@ -12,7 +12,7 @@ namespace OKNet.App.ViewModel.Design
             Height = "800";
             Projects = new ObservableCollection<ProjectViewModel>
                 {new ProjectViewModel {Key = "RATES", Id = 1, CountInProgress = 500, Name = "RATES"}};
-            AddNewIssues(new List<IssueViewModel>
+            AddOrUpdateNewIssues(new List<IssueViewModel>
             {
                 new DesignIssueViewModel(),
                 new IssueViewModel
