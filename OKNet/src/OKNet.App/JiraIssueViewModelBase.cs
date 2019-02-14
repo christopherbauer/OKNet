@@ -37,7 +37,7 @@ namespace OKNet.App
             }
         }
 
-        public void AddNewIssues(IEnumerable<IssueViewModel> issueViewModels)
+        public virtual void AddNewIssues(IEnumerable<IssueViewModel> issueViewModels)
         {
             var newIssues = issueViewModels.OrderByDescending(model => model.Updated)
                 .Where(model => Issues.All(viewModel => viewModel.Key != model.Key));
@@ -45,6 +45,7 @@ namespace OKNet.App
             {
                 Issues.Add(issueViewModel);
             }
+
         }
 
         public override void Refresh()
