@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using OKNet.App.ViewModel;
 using OKNet.Common;
@@ -28,7 +29,7 @@ namespace OKNet.App
             InitialLoad();
         }
 
-        private void InitialLoad()
+        private async void InitialLoad()
         {
 
             var configService = new ConfigService();
@@ -81,62 +82,28 @@ namespace OKNet.App
 
                     bool lastPage = false;
                     var startAt = 0;
-                    while (!lastPage)
+                    
+                    var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"), jiraConfig.Username, jiraConfigPassword, jiraQuery.ToString(), startAt);
+                    if (issueResult.StatusCode == 200)
                     {
-                        var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"), jiraConfig.Username, jiraConfigPassword, jiraQuery.ToString(), startAt);
-                        if (issueResult.StatusCode == 200)
-                        {
-                            viewModel.IssuesTotal = issueResult.Data.total;
-                            viewModel.AddNewIssues(jiraApiService.ParseIssues(issueResult));
-                            viewModel.RefreshProjectCounts();
-                        }
-                        if (issueResult.Data.startAt >= issueResult.Data.total)
-                        {
-                            lastPage = true;
-                        }
-                        else
-                        {
-                            startAt += issueResult.Data.issues.Length;
-                        }
+                        viewModel.IssuesTotal = issueResult.Data.total;
+                        viewModel.AddNewIssues(jiraApiService.ParseIssues(issueResult));
+                        viewModel.RefreshProjectCounts();
                     }
+                    if (issueResult.Data.startAt + 50 >= issueResult.Data.total)
+                    {
+                        lastPage = true;
+                    }
+                    else
+                    {
+                        startAt += issueResult.Data.issues.Length;
+                    }
+
+                    SetupJiraInProgressWindow(lastPage, startAt, url, apiBase, jiraConfig, jiraConfigPassword, jiraQuery, viewModel, jiraApiService);
                 }
                 if (windowConfig.Type == "jira-complete")
                 {
-                    var jiraConfig = configService.GetConfig<JiraConfig>(pathString);
-
-                    string url = $"https://{jiraConfig.ApiHost}";
-                    string apiBase = "/search";
-
-                    var jiraQuery = new JiraQuery().ResolvedSince(DateTime.Today).StatusCategoryIs(JiraStatusCategory.COMPLETE)
-                        .OrderBy("updated");
-
-
-                    var jiraConfigPassword = Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password));
-
-                    var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"), jiraConfig.Username, jiraConfigPassword, jiraQuery.ToString());
-
-                    var projects = new ApiRequestService().MakeRequestWithBasicAuth<List<ProjectApiModel>>(new Uri($"{url}/project"), jiraConfig.Username, jiraConfigPassword, "");
-
-                    if (issueResult.StatusCode == 200)
-                    {
-                        var item = new JiraCompletedIssueViewModel
-                        {
-                            Width = jiraConfig.Width,
-                            Height = jiraConfig.Height,
-                            Projects = new ObservableCollection<ProjectViewModel>(projects.Data.Select(model =>
-                                new ProjectViewModel
-                                {
-                                    Name = model.name,
-                                    Key = model.key,
-                                    Id = Convert.ToInt32(model.id),
-                                    Width = (int)(Convert.ToInt32(jiraConfig.Width) / 3m - 4)
-                                })),
-                            IssuesTotal = issueResult.Data.total
-                        };
-                        item.AddNewIssues(jiraApiService.ParseIssues(issueResult));
-                        item.RefreshProjectCounts();
-                        windowConfigViewModels.Add(item);
-                    }
+                    SetupJiraCompleteWindow(configService, pathString, jiraApiService, windowConfigViewModels);
                 }
 
             }
@@ -144,6 +111,81 @@ namespace OKNet.App
             DataContext = new WindowViewModel { Windows = new ObservableCollection<ViewModelBase>(windowConfigViewModels) };
 
             AppHeartbeatTimer.Elapsed += (sender, args) => Dispatcher.Invoke(RefreshHierarchy);
+        }
+
+        private async Task SetupJiraInProgressWindow(bool lastPage, int startAt, string url, string apiBase,
+            JiraConfig jiraConfig, string jiraConfigPassword, JiraQuery jiraQuery, JiraInProgressIssueViewModel viewModel,
+            JiraApiService jiraApiService)
+        {
+            ApiResponse<APIIssueRequestRoot> issueResult;
+            while (!lastPage)
+            {
+                var at = startAt;
+
+                void Callback()
+                {
+                    issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(
+                        new Uri($"{url}{apiBase}"), jiraConfig.Username, jiraConfigPassword, jiraQuery.ToString(), at);
+                    if (issueResult.StatusCode == 200)
+                    {
+                        viewModel.AddNewIssues(jiraApiService.ParseIssues(issueResult));
+                        viewModel.RefreshProjectCounts();
+                    }
+                }
+
+                await Task.Run(() => Dispatcher.Invoke((Action) Callback));
+
+                if (startAt + 50 >= viewModel.IssuesTotal)
+                {
+                    lastPage = true;
+                }
+                else
+                {
+                    startAt += 50;
+                }
+            }
+        }
+
+        private async Task SetupJiraCompleteWindow(ConfigService configService, string pathString,
+            JiraApiService jiraApiService, List<ViewModelBase> windowConfigViewModels)
+        {
+            var jiraConfig = configService.GetConfig<JiraConfig>(pathString);
+
+            string url = $"https://{jiraConfig.ApiHost}";
+            string apiBase = "/search";
+
+            var jiraQuery = new JiraQuery().ResolvedSince(DateTime.Today).StatusCategoryIs(JiraStatusCategory.COMPLETE)
+                .OrderBy("updated");
+
+
+            var jiraConfigPassword = Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password));
+
+            var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"),
+                jiraConfig.Username, jiraConfigPassword, jiraQuery.ToString());
+
+            var projects = new ApiRequestService().MakeRequestWithBasicAuth<List<ProjectApiModel>>(new Uri($"{url}/project"),
+                jiraConfig.Username, jiraConfigPassword, "");
+
+            if (issueResult.StatusCode == 200)
+            {
+                var item = new JiraCompletedIssueViewModel
+                {
+                    Width = jiraConfig.Width,
+                    Height = jiraConfig.Height,
+                    Projects = new ObservableCollection<ProjectViewModel>(projects.Data.Select(model =>
+                        new ProjectViewModel
+                        {
+                            Name = model.name,
+                            Key = model.key,
+                            Id = Convert.ToInt32(model.id),
+                            Width = (int) (Convert.ToInt32(jiraConfig.Width) / 3m - 4)
+                        })),
+                    IssuesTotal = issueResult.Data.total
+                };
+                item.AddNewIssues(jiraApiService.ParseIssues(issueResult));
+                item.RefreshProjectCounts();
+                windowConfigViewModels.Add(item);
+            }
         }
 
         private void RefreshHierarchy()
