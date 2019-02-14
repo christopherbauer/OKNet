@@ -26,7 +26,7 @@ namespace OKNet.App.ViewModel.Design
                 return DateTime.UtcNow.AddMinutes(-executions*random.Next(3, 20));
             }
 
-            AddNewIssues(new List<IssueViewModel>
+            AddOrUpdateNewIssues(new List<IssueViewModel>
             {
                 new IssueViewModel { Updated=GetUtcDropoff(), Key = "RATES-1", Name = "Create Nightly Rate Plan", ProjectId = 2, Component = new ObservableCollection<ComponentViewModel> {new ComponentViewModel {Name = "RatesV2", Id = 1} } },
                 new IssueViewModel { Updated=GetUtcDropoff(), Key = "RATES-2", Name = "Create Derived Rate Plan", ProjectId = 2, Component = new ObservableCollection<ComponentViewModel> {new ComponentViewModel {Name = "RatesV2", Id = 1} } },

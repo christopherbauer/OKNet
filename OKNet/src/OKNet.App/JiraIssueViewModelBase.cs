@@ -43,14 +43,22 @@ namespace OKNet.App
             }
         }
 
-        public virtual void AddNewIssues(IEnumerable<IssueViewModel> issueViewModels)
+        public virtual void AddOrUpdateNewIssues(IEnumerable<IssueViewModel> issueViewModels)
         {
+            //This could be better but YOLO
+            var issuesToUpdate = issueViewModels.Where(model => Issues.Any(currentIssues => currentIssues.Key == model.Key));
+            foreach (var issueViewModel in issuesToUpdate)
+            {
+                Issues.Remove(Issues.Single(currentIssue => currentIssue.Key == issueViewModel.Key));
+            }
+
             var newIssues = issueViewModels.OrderByDescending(model => model.Updated)
                 .Where(model => Issues.All(viewModel => viewModel.Key != model.Key));
             foreach (var issueViewModel in newIssues)
             {
                 Issues.Add(issueViewModel);
             }
+
 
             IssuesTotal = Issues.Count;
         }

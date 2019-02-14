@@ -29,9 +29,9 @@ namespace OKNet.App.ViewModel
             }
         }
 
-        public override void AddNewIssues(IEnumerable<IssueViewModel> issueViewModels)
+        public override void AddOrUpdateNewIssues(IEnumerable<IssueViewModel> issueViewModels)
         {
-            base.AddNewIssues(issueViewModels);
+            base.AddOrUpdateNewIssues(issueViewModels);
             OnPropertyChanged(nameof(GetVisibleIssues));
             OnPropertyChanged(nameof(GetIssue));
         }

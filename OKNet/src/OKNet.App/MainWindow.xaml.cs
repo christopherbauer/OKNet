@@ -88,7 +88,7 @@ namespace OKNet.App
                     if (issueResult.StatusCode == 200)
                     {
                         viewModel.IssuesTotal = issueResult.Data.total;
-                        viewModel.AddNewIssues(jiraApiService.ParseIssues(issueResult));
+                        viewModel.AddOrUpdateNewIssues(jiraApiService.ParseIssues(issueResult));
                         viewModel.RefreshProjectCounts();
                     }
                     if (issueResult.Data.startAt + 50 >= issueResult.Data.total)
@@ -159,7 +159,7 @@ namespace OKNet.App
                     new Uri($"{url}{apiBase}"), jiraConfig.Username, jiraConfigPassword, jiraQuery.ToString(), startAt);
                 if (issueResult.StatusCode == 200)
                 {
-                    viewModel.AddNewIssues(jiraApiService.ParseIssues(issueResult));
+                    viewModel.AddOrUpdateNewIssues(jiraApiService.ParseIssues(issueResult));
                     viewModel.RefreshProjectCounts();
                 }
                 else
@@ -207,7 +207,7 @@ namespace OKNet.App
                         })),
                     IssuesTotal = issueResult.Data.total
                 };
-                item.AddNewIssues(jiraApiService.ParseIssues(issueResult));
+                item.AddOrUpdateNewIssues(jiraApiService.ParseIssues(issueResult));
                 item.RefreshProjectCounts();
                 windowConfigViewModels.Add(item);
             }
