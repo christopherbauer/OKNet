@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:OKNet.App"
         xmlns:viewModel="clr-namespace:OKNet.App.ViewModel"
         xmlns:design="clr-namespace:OKNet.App.ViewModel.Design"
         xmlns:userControl="clr-namespace:OKNet.App.UserControl"
@@ -21,17 +20,22 @@
             <userControl:BasicWebsiteView></userControl:BasicWebsiteView>
         </DataTemplate>
     </Window.Resources>
-    <ItemsControl ItemsSource="{Binding Windows}">
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <StackPanel Orientation="Horizontal" />
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <ContentControl Content="{Binding}">
-                </ContentControl>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
+    <Grid>
+        <ItemsControl ItemsSource="{Binding Windows}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ContentControl Content="{Binding}">
+                    </ContentControl>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Border Visibility="{Binding IsDebugMode, Converter={StaticResource BoolToVisibilityConverter}}" BorderThickness="1" BorderBrush="Silver" Background="AntiqueWhite" Padding=".5" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="{Binding AssemblyVersion}"></TextBlock>
+        </Border>
+    </Grid>
 </Window>
