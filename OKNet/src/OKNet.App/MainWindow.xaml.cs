@@ -19,6 +19,7 @@ namespace OKNet.App
     public partial class MainWindow : Window
     {
         protected internal Timer AppHeartbeatTimer = new Timer { Interval = (int)TimeSpan.FromSeconds(5).TotalMilliseconds };
+        private DateTime _lastUpdate = DateTime.MinValue;
 
         public MainWindow()
         {
@@ -99,7 +100,7 @@ namespace OKNet.App
                         startAt += issueResult.Data.issues.Length;
                     }
 
-                    SetupJiraInProgressWindow(lastPage, startAt, url, apiBase, jiraConfig, jiraConfigPassword, jiraQuery, viewModel, jiraApiService);
+                    SetupJiraInProgressWindow(lastPage, startAt, url, apiBase, jiraConfig, jiraConfigPassword, jiraQuery, viewModel, jiraApiService, issueResult.Data.total);
                 }
                 if (windowConfig.Type == "jira-complete")
                 {
@@ -115,27 +116,15 @@ namespace OKNet.App
 
         private async Task SetupJiraInProgressWindow(bool lastPage, int startAt, string url, string apiBase,
             JiraConfig jiraConfig, string jiraConfigPassword, JiraQuery jiraQuery, JiraInProgressIssueViewModel viewModel,
-            JiraApiService jiraApiService)
+            JiraApiService jiraApiService, int issuesTotal)
         {
-            ApiResponse<APIIssueRequestRoot> issueResult;
             while (!lastPage)
             {
                 var at = startAt;
 
-                void Callback()
-                {
-                    issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(
-                        new Uri($"{url}{apiBase}"), jiraConfig.Username, jiraConfigPassword, jiraQuery.ToString(), at);
-                    if (issueResult.StatusCode == 200)
-                    {
-                        viewModel.AddNewIssues(jiraApiService.ParseIssues(issueResult));
-                        viewModel.RefreshProjectCounts();
-                    }
-                }
+                await MakeInProgressRequest(url, apiBase, jiraConfig, jiraConfigPassword, jiraQuery, viewModel, jiraApiService, at);
 
-                await Task.Run(() => Dispatcher.Invoke((Action) Callback));
-
-                if (startAt + 50 >= viewModel.IssuesTotal)
+                if (startAt + 50 >= issuesTotal)
                 {
                     lastPage = true;
                 }
@@ -144,6 +133,42 @@ namespace OKNet.App
                     startAt += 50;
                 }
             }
+
+            _lastUpdate = DateTime.Now;
+            AppHeartbeatTimer.Elapsed += (sender, args) => Dispatcher.Invoke(() =>
+            {
+                Console.WriteLine("ELAPSED");
+                if (DateTime.Now.Subtract(_lastUpdate) > TimeSpan.FromMinutes(1))
+                {
+                    Console.WriteLine("TRYUPDATE");
+                    MakeInProgressRequest(url, apiBase, jiraConfig, jiraConfigPassword, new JiraQuery().StatusCategoryIs(JiraStatusCategory.IN_PROGRESS).UpdatedSince(-15, JiraTimeDifference.Minutes).OrderBy("updated"), viewModel,
+                        jiraApiService, 0);
+                    _lastUpdate = DateTime.Now;
+                }
+
+            });
+
+        }
+
+        private async Task MakeInProgressRequest(string url, string apiBase, JiraConfig jiraConfig, string jiraConfigPassword,
+            JiraQuery jiraQuery, JiraInProgressIssueViewModel viewModel, JiraApiService jiraApiService, int startAt)
+        {
+            void Callback()
+            {
+                var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(
+                    new Uri($"{url}{apiBase}"), jiraConfig.Username, jiraConfigPassword, jiraQuery.ToString(), startAt);
+                if (issueResult.StatusCode == 200)
+                {
+                    viewModel.AddNewIssues(jiraApiService.ParseIssues(issueResult));
+                    viewModel.RefreshProjectCounts();
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            await Task.Run(() => Dispatcher.Invoke((Action) Callback));
         }
 
         private async Task SetupJiraCompleteWindow(ConfigService configService, string pathString,
