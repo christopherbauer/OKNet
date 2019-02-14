@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Input;
 using Humanizer;
+using OKNet.App.Command;
 
 namespace OKNet.App.ViewModel
 {
@@ -17,10 +19,9 @@ namespace OKNet.App.ViewModel
         private string _status;
 
         public string GetComponent => string.Join(",", Component.Select(model => model.Name));
-
         public string GetUpdatedHumanReadable => Updated.Humanize(false);
         public string StatusColor => StatusColorDictionary.ContainsKey(Status) ? StatusColorDictionary[Status] : "Silver";
-
+        public ICommand UpdatedCommand => new DelegateCommand(() => OnPropertyChanged(nameof(GetUpdatedHumanReadable)), o => true);
 
         public string Name
         {
@@ -75,5 +76,10 @@ namespace OKNet.App.ViewModel
             { "PM review", "LightSkyBlue" },
             { "Ready for business", "LightSkyBlue" },
         };
+
+        public override void Refresh()
+        {
+            UpdatedCommand.Execute(null);
+        }
     }
 }

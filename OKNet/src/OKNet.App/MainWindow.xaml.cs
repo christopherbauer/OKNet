@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using OKNet.App.ViewModel;
 using OKNet.Common;
 using OKNet.Core;
 using OKNet.Infrastructure.Jira;
+using Timer = System.Timers.Timer;
 
 namespace OKNet.App
 {
@@ -17,16 +17,20 @@ namespace OKNet.App
     /// </summary>
     public partial class MainWindow : Window
     {
+        protected internal Timer AppHeartbeatTimer = new Timer { Interval = (int)TimeSpan.FromSeconds(5).TotalMilliseconds };
 
         public MainWindow()
         {
             InitializeComponent();
+
+            AppHeartbeatTimer.Start();
 
             InitialLoad();
         }
 
         private void InitialLoad()
         {
+
             var configService = new ConfigService();
 
             var names = configService.GetNames("windows").ToList();
@@ -137,8 +141,18 @@ namespace OKNet.App
 
             }
 
-            DataContext = new WindowViewModel
-            { Windows = new ObservableCollection<ViewModelBase>(windowConfigViewModels) };
+            DataContext = new WindowViewModel { Windows = new ObservableCollection<ViewModelBase>(windowConfigViewModels) };
+
+            AppHeartbeatTimer.Elapsed += (sender, args) => Dispatcher.Invoke(RefreshHierarchy);
+        }
+
+        private void RefreshHierarchy()
+        {
+            var viewModel = (WindowViewModel) DataContext;
+            foreach (var viewModelWindow in viewModel.Windows)
+            {
+                viewModelWindow.Refresh();
+            }
         }
     }
 }

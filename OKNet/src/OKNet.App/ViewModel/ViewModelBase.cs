@@ -24,5 +24,8 @@ namespace OKNet.App.ViewModel
             }
         }
 
+        public virtual void Refresh()
+        {
+        }
     }
 }

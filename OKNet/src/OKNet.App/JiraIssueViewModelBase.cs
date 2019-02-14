@@ -32,16 +32,26 @@ namespace OKNet.App
         {
             foreach (var projectViewModel in Projects)
             {
-                projectViewModel.CountCompleted = Issues.Count(viewModel => viewModel.ProjectId == Convert.ToInt32(projectViewModel.Id));
+                projectViewModel.CountCompleted = Issues.Count(viewModel =>
+                    viewModel.ProjectId == Convert.ToInt32(projectViewModel.Id));
             }
         }
 
         public void AddNewIssues(IEnumerable<IssueViewModel> issueViewModels)
         {
-            var newIssues = issueViewModels.OrderByDescending(model => model.Updated).Where(model => Issues.All(viewModel => viewModel.Key != model.Key));
+            var newIssues = issueViewModels.OrderByDescending(model => model.Updated)
+                .Where(model => Issues.All(viewModel => viewModel.Key != model.Key));
             foreach (var issueViewModel in newIssues)
             {
                 Issues.Add(issueViewModel);
+            }
+        }
+
+        public override void Refresh()
+        {
+            foreach (var issueViewModel in Issues)
+            {
+                issueViewModel.Refresh();
             }
         }
     }

@@ -68,6 +68,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Command\DataCommand.cs" />
+    <Compile Include="Command\DelegateCommand.cs" />
     <Compile Include="DesignIssueViewModel.cs" />
     <Compile Include="IssueStatusView.xaml.cs">
       <DependentUpon>IssueStatusView.xaml</DependentUpon>
