@@ -10,5 +10,6 @@ namespace OKNet.App.ViewModel
         public ImageSource Icon { get; set; }
         public int CountCompleted { get; set; }
         public int CountInProgress { get; set; }
+        public int Width { get; set; }
     }
 }

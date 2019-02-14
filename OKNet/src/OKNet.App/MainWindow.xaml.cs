@@ -70,7 +70,7 @@ namespace OKNet.App
 
                     if (projectsResult.StatusCode == 200)
                     {
-                        viewModel.Projects = JiraApiService.ParseProjects(projectsResult);
+                        viewModel.Projects = JiraApiService.ParseProjects(projectsResult, Convert.ToInt32(jiraConfig.Width));
                     }
                     windowConfigViewModels.Add(viewModel);
 
@@ -125,6 +125,7 @@ namespace OKNet.App
                                     Name = model.name,
                                     Key = model.key,
                                     Id = Convert.ToInt32(model.id),
+                                    Width = (int)(Convert.ToInt32(jiraConfig.Width) / 3m - 4)
                                 })),
                             IssuesTotal = issueResult.Data.total
                         };
