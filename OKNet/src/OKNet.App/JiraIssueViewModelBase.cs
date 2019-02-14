@@ -8,9 +8,15 @@ namespace OKNet.App
 {
     public class JiraIssueViewModelBase : WindowConfigViewModel
     {
-        protected ObservableCollection<IssueViewModel> _issues = new ObservableCollection<IssueViewModel>();
-        protected ObservableCollection<ProjectViewModel> _projects;
-        public int IssuesTotal { get; set; }
+        private ObservableCollection<IssueViewModel> _issues = new ObservableCollection<IssueViewModel>();
+        private ObservableCollection<ProjectViewModel> _projects;
+        private int _issuesTotal;
+
+        public int IssuesTotal
+        {
+            get => _issuesTotal;
+            set => SetValue(ref _issuesTotal, value);
+        }
 
         public ObservableCollection<IssueViewModel> Issues
         {
@@ -46,6 +52,7 @@ namespace OKNet.App
                 Issues.Add(issueViewModel);
             }
 
+            IssuesTotal = Issues.Count;
         }
 
         public override void Refresh()
