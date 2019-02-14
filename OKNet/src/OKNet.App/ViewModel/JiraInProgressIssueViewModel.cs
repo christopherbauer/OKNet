@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -19,6 +20,19 @@ namespace OKNet.App.ViewModel
             }
         }
 
-        public ObservableCollection<IssueViewModel> GetVisibleIssues => new ObservableCollection<IssueViewModel>(Issues.OrderByDescending(model => model.Updated).Skip(Page*50).Take(50));
+        public ObservableCollection<IssueViewModel> GetVisibleIssues
+        {
+            get
+            {
+                return new ObservableCollection<IssueViewModel>(Issues.OrderByDescending(model => model.Updated)
+                    .Skip(Page * 50).Take(50));
+            }
+        }
+
+        public override void AddNewIssues(IEnumerable<IssueViewModel> issueViewModels)
+        {
+            base.AddNewIssues(issueViewModels);
+            OnPropertyChanged(nameof(GetVisibleIssues));
+        }
     }
 }
