@@ -30,14 +30,16 @@ namespace OKNet.App
                 });
         }
 
-        public static ObservableCollection<ProjectViewModel> ParseProjects(ApiResponse<List<ProjectApiModel>> projects)
+        public static ObservableCollection<ProjectViewModel> ParseProjects(ApiResponse<List<ProjectApiModel>> projects,
+            int parentWidth)
         {
             return new ObservableCollection<ProjectViewModel>(projects.Data.Select(model =>
                 new ProjectViewModel
                 {
                     Name = model.name,
                     Key = model.key,
-                    Id = Convert.ToInt32(model.id)
+                    Id = Convert.ToInt32(model.id),
+                    Width = (int) (Math.Floor(parentWidth / 3m) - 4)
                 }));
         }
 

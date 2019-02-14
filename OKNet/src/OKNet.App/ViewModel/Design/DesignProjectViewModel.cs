@@ -6,6 +6,7 @@ namespace OKNet.App.ViewModel.Design
         {
             Id = 2;
             Name = "Inventory";
+            Width = 300;
             Key = "I";
         }
     }
