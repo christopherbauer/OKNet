@@ -33,6 +33,7 @@ namespace OKNet.App.ViewModel
         {
             base.AddNewIssues(issueViewModels);
             OnPropertyChanged(nameof(GetVisibleIssues));
+            OnPropertyChanged(nameof(GetIssue));
         }
     }
 }

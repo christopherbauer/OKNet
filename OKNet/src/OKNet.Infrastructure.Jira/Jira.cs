@@ -21,17 +21,16 @@ namespace OKNet.Infrastructure.Jira
             { JiraTimeDifference.Days, "d" },
             { JiraTimeDifference.Weeks, "w" }
         };
+
+        private static string _apiDateFormat = "yyyy-MM-dd";
+
         public static JiraQuery UpdatedSince(this JiraQuery query, int amount, JiraTimeDifference diff)
         {
             return query.Add($"updated>={amount}{TimeDictionary[diff]}");
         }
-        public static JiraQuery UpdatedSince(this JiraQuery query, DateTime time)
-        {
-            return query.Add($"updated>={time:yyyy-MM-dd}");
-        }
         public static JiraQuery ResolvedSince(this JiraQuery query, DateTime time)
         {
-            return query.Add($"resolutiondate>={time:yyyy-MM-dd}");
+            return query.Add($"resolutiondate>={time.ToString(_apiDateFormat)}");
         }
         public static JiraQuery StatusCategoryIs(this JiraQuery query, JiraStatusCategory category)
         {
