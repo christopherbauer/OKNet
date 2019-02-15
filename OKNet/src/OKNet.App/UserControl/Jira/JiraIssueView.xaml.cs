@@ -1,4 +1,4 @@
-namespace OKNet.App
+namespace OKNet.App.UserControl.Jira
 {
     public partial class IssueView
     {

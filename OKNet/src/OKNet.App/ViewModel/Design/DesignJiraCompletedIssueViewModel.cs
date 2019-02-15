@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using OKNet.App.ViewModel.Jira;
 
 namespace OKNet.App.ViewModel.Design
 {
@@ -10,12 +11,12 @@ namespace OKNet.App.ViewModel.Design
         {
             Width = "800";
             Height = "800";
-            Projects = new ObservableCollection<ProjectViewModel>
+            Projects = new ObservableCollection<JiraProjectViewModel>
             {
-                new ProjectViewModel { Id = 1, Name = "OKNET", Key = "OK"},
-                new ProjectViewModel { Id = 2, Name = "OKNETCore", Key = "OKCORE"},
-                new ProjectViewModel { Id = 3, Name = "OKNETJira", Key = "OKJira" },
-                new ProjectViewModel { Id = 4, Name = "OKNETCommon", Key = "OKCMN" }
+                new JiraProjectViewModel { Id = 1, Name = "OKNET", Key = "OK"},
+                new JiraProjectViewModel { Id = 2, Name = "OKNETCore", Key = "OKCORE"},
+                new JiraProjectViewModel { Id = 3, Name = "OKNETJira", Key = "OKJira" },
+                new JiraProjectViewModel { Id = 4, Name = "OKNETCommon", Key = "OKCMN" }
             };
 
             var executions = 0;
@@ -26,14 +27,14 @@ namespace OKNet.App.ViewModel.Design
                 return DateTime.UtcNow.AddMinutes(-executions * random.Next(3, 20));
             }
 
-            AddOrUpdateNewIssues(new List<IssueViewModel>
+            AddOrUpdateNewIssues(new List<JiraIssueViewModel>
             {
-                new DesignIssueViewModel(),
-                new IssueViewModel { Updated=GetUtcDropoff(), Key = "OKNET-2", Name = "PoC Website ViewModel", ProjectId = 1, Component = new ObservableCollection<ComponentViewModel> {new ComponentViewModel {Name = "WPF", Id = 1} } },
-                new IssueViewModel { Updated=GetUtcDropoff(), Key = "OKNET-3", Name = "PoC Jira Completed ViewModel", ProjectId = 1, Component = new ObservableCollection<ComponentViewModel> {new ComponentViewModel {Name = "JIRA", Id = 2} } },
-                new IssueViewModel { Updated=GetUtcDropoff(), Key = "OKNET-4", Name = "PoC Jira In-Progress ViewModel", ProjectId = 1, Component = new ObservableCollection<ComponentViewModel> {new ComponentViewModel {Name = "JIRA", Id = 1} } },
-                new IssueViewModel { Updated=GetUtcDropoff(), Key = "OKNETJira-1", Name = "Develop Completed Issue API Call", ProjectId = 3, Component = new ObservableCollection<ComponentViewModel> {new ComponentViewModel {Name = "", Id = 2} } },
-                new IssueViewModel { Updated=GetUtcDropoff(), Key = "OKNETCommon-1", Name = "Develop configuration viewmodel base for kiosk settings", ProjectId = 4, Component = new ObservableCollection<ComponentViewModel> {new ComponentViewModel {Name = "WPF", Id = 3} } }
+                new DesignJiraIssueViewModel(),
+                new JiraIssueViewModel { Updated=GetUtcDropoff(), Key = "OKNET-2", Name = "PoC Website ViewModel", ProjectId = 1, Component = new ObservableCollection<JiraComponentViewModel> {new JiraComponentViewModel {Name = "WPF", Id = 1} } },
+                new JiraIssueViewModel { Updated=GetUtcDropoff(), Key = "OKNET-3", Name = "PoC Jira Completed ViewModel", ProjectId = 1, Component = new ObservableCollection<JiraComponentViewModel> {new JiraComponentViewModel {Name = "JIRA", Id = 2} } },
+                new JiraIssueViewModel { Updated=GetUtcDropoff(), Key = "OKNET-4", Name = "PoC Jira In-Progress ViewModel", ProjectId = 1, Component = new ObservableCollection<JiraComponentViewModel> {new JiraComponentViewModel {Name = "JIRA", Id = 1} } },
+                new JiraIssueViewModel { Updated=GetUtcDropoff(), Key = "OKNETJira-1", Name = "Develop Completed Issue API Call", ProjectId = 3, Component = new ObservableCollection<JiraComponentViewModel> {new JiraComponentViewModel {Name = "", Id = 2} } },
+                new JiraIssueViewModel { Updated=GetUtcDropoff(), Key = "OKNETCommon-1", Name = "Develop configuration viewmodel base for kiosk settings", ProjectId = 4, Component = new ObservableCollection<JiraComponentViewModel> {new JiraComponentViewModel {Name = "WPF", Id = 3} } }
             });
             RefreshProjectCounts();
         }

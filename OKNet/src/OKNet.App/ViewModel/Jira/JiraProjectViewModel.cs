@@ -1,8 +1,8 @@
 ﻿using System.Windows.Media;
 
-namespace OKNet.App.ViewModel
+namespace OKNet.App.ViewModel.Jira
 {
-    public class ProjectViewModel : ViewModelBase
+    public class JiraProjectViewModel : ViewModelBase
     {
         private int _countCompleted;
         public string Name { get; set; }

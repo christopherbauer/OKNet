@@ -6,13 +6,13 @@ using System.Windows.Input;
 using Humanizer;
 using OKNet.App.Command;
 
-namespace OKNet.App.ViewModel
+namespace OKNet.App.ViewModel.Jira
 {
-    public class IssueViewModel : ViewModelBase
+    public class JiraIssueViewModel : ViewModelBase
     {
         private string _name;
         private string _key;
-        private ObservableCollection<ComponentViewModel> _component;
+        private ObservableCollection<JiraComponentViewModel> _component;
         private int _projectId;
         private DateTime _updated;
         private string _statusCategory;
@@ -35,7 +35,7 @@ namespace OKNet.App.ViewModel
             set => SetValue(ref _key, value);
         }
 
-        public ObservableCollection<ComponentViewModel> Component
+        public ObservableCollection<JiraComponentViewModel> Component
         {
             get => _component;
             set => SetValue(ref _component, value);

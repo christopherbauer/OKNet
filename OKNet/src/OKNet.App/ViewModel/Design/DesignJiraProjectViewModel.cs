@@ -1,8 +1,10 @@
+using OKNet.App.ViewModel.Jira;
+
 namespace OKNet.App.ViewModel.Design
 {
-    public class DesignProjectViewModel : ProjectViewModel
+    public class DesignJiraProjectViewModel : JiraProjectViewModel
     {
-        public DesignProjectViewModel()
+        public DesignJiraProjectViewModel()
         {
             Id = 1;
             Name = "OKNET";

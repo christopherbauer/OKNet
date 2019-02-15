@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using OKNet.App.ViewModel;
 
-namespace OKNet.App
+namespace OKNet.App.ViewModel.Jira
 {
     public class JiraIssueViewModelBase : WindowConfigViewModel
     {
-        private ObservableCollection<IssueViewModel> _issues = new ObservableCollection<IssueViewModel>();
-        private ObservableCollection<ProjectViewModel> _projects;
+        private ObservableCollection<JiraIssueViewModel> _issues = new ObservableCollection<JiraIssueViewModel>();
+        private ObservableCollection<JiraProjectViewModel> _projects;
         private int _issuesTotal;
 
         public int IssuesTotal
@@ -18,13 +17,13 @@ namespace OKNet.App
             set => SetValue(ref _issuesTotal, value);
         }
 
-        public ObservableCollection<IssueViewModel> Issues
+        public ObservableCollection<JiraIssueViewModel> Issues
         {
             get => _issues;
             set => SetValue(ref _issues, value);
         }
 
-        public ObservableCollection<ProjectViewModel> Projects
+        public ObservableCollection<JiraProjectViewModel> Projects
         {
             get { return _projects; }
             set
@@ -43,7 +42,7 @@ namespace OKNet.App
             }
         }
 
-        public virtual void AddOrUpdateNewIssues(IEnumerable<IssueViewModel> issueViewModels)
+        public virtual void AddOrUpdateNewIssues(IEnumerable<JiraIssueViewModel> issueViewModels)
         {
             //This could be better but YOLO
             var issuesToUpdate = issueViewModels.Where(model => Issues.Any(currentIssues => currentIssues.Key == model.Key));

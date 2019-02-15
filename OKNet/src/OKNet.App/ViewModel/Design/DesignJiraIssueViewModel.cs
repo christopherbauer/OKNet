@@ -1,21 +1,20 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using OKNet.App.ViewModel;
+using OKNet.App.ViewModel.Jira;
 
-namespace OKNet.App
+namespace OKNet.App.ViewModel.Design
 {
-    public class DesignIssueViewModel : IssueViewModel
+    public class DesignJiraIssueViewModel : JiraIssueViewModel
     {
-        public DesignIssueViewModel()
+        public DesignJiraIssueViewModel()
         {
             Key = "OKNET-1";
             Status = "In Development";
             StatusCategory = "Development";
             Name = "Create OKNET Kiosk Viewer WPF App";
             ProjectId = 1;
-            Component = new ObservableCollection<ComponentViewModel>
-                {new ComponentViewModel {Name = "", Id = 1}};
+            Component = new ObservableCollection<JiraComponentViewModel>
+                {new JiraComponentViewModel {Name = "", Id = 1}};
             Updated = DateTime.Now.AddHours(-2);
         }
     }

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using OKNet.App.ViewModel;
+using OKNet.App.ViewModel.Jira;
 using OKNet.Common;
 using OKNet.Core;
 using OKNet.Infrastructure.Jira;
@@ -198,8 +199,8 @@ namespace OKNet.App
                 {
                     Width = jiraConfig.Width,
                     Height = jiraConfig.Height,
-                    Projects = new ObservableCollection<ProjectViewModel>(projects.Data.Select(model =>
-                        new ProjectViewModel
+                    Projects = new ObservableCollection<JiraProjectViewModel>(projects.Data.Select(model =>
+                        new JiraProjectViewModel
                         {
                             Name = model.name,
                             Key = model.key,

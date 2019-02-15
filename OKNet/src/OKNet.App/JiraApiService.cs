@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using OKNet.App.ViewModel;
+using OKNet.App.ViewModel.Jira;
 using OKNet.Core;
 using OKNet.Infrastructure.Jira;
 
@@ -10,15 +11,15 @@ namespace OKNet.App
 {
     public class JiraApiService
     {
-        public IEnumerable<IssueViewModel> ParseIssues(ApiResponse<APIIssueRequestRoot> issueResult)
+        public IEnumerable<JiraIssueViewModel> ParseIssues(ApiResponse<APIIssueRequestRoot> issueResult)
         {
             return issueResult.Data.issues.Select(
-                model => new IssueViewModel
+                model => new JiraIssueViewModel
                 {
                     Key = model.key,
                     Name = model.fields.summary,
-                    Component = new ObservableCollection<ComponentViewModel>(
-                        model.fields.components.Select(component => new ComponentViewModel
+                    Component = new ObservableCollection<JiraComponentViewModel>(
+                        model.fields.components.Select(component => new JiraComponentViewModel
                         {
                             Id = Convert.ToInt32(component.id),
                             Name = component.name
@@ -30,11 +31,11 @@ namespace OKNet.App
                 });
         }
 
-        public static ObservableCollection<ProjectViewModel> ParseProjects(ApiResponse<List<ProjectApiModel>> projects,
+        public static ObservableCollection<JiraProjectViewModel> ParseProjects(ApiResponse<List<ProjectApiModel>> projects,
             int parentWidth)
         {
-            return new ObservableCollection<ProjectViewModel>(projects.Data.Select(model =>
-                new ProjectViewModel
+            return new ObservableCollection<JiraProjectViewModel>(projects.Data.Select(model =>
+                new JiraProjectViewModel
                 {
                     Name = model.name,
                     Key = model.key,

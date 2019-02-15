@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace OKNet.App.ViewModel
+namespace OKNet.App.ViewModel.Jira
 {
     public class JiraInProgressIssueViewModel : JiraIssueViewModelBase
     {
         private int _page;
-        public ObservableCollection<ProjectViewModel> GetVisibleProjects => new ObservableCollection<ProjectViewModel>(Projects.ToList());
+        public ObservableCollection<JiraProjectViewModel> GetVisibleProjects => new ObservableCollection<JiraProjectViewModel>(Projects.ToList());
         public string GetIssue => $"{IssuesTotal} issue(s) In Progress";
 
         public int Page
@@ -20,16 +20,16 @@ namespace OKNet.App.ViewModel
             }
         }
 
-        public ObservableCollection<IssueViewModel> GetVisibleIssues
+        public ObservableCollection<JiraIssueViewModel> GetVisibleIssues
         {
             get
             {
-                return new ObservableCollection<IssueViewModel>(Issues.OrderByDescending(model => model.Updated)
+                return new ObservableCollection<JiraIssueViewModel>(Issues.OrderByDescending(model => model.Updated)
                     .Skip(Page * 50).Take(50));
             }
         }
 
-        public override void AddOrUpdateNewIssues(IEnumerable<IssueViewModel> issueViewModels)
+        public override void AddOrUpdateNewIssues(IEnumerable<JiraIssueViewModel> issueViewModels)
         {
             base.AddOrUpdateNewIssues(issueViewModels);
             OnPropertyChanged(nameof(GetVisibleIssues));
