@@ -12,7 +12,8 @@
         <StackPanel Orientation="Vertical">
             <TextBlock Text="JIRA In Progress (Last 30d) Issues" FontSize="22px" HorizontalAlignment="Center"></TextBlock>
             <TextBlock Text="{Binding GetIssue}" FontSize="16px" Margin="10,0,0,0"></TextBlock>
-            <ItemsControl  ItemsSource="{Binding GetVisibleProjects}" Width="{Binding Width}" Margin="5,5,5,5">
+            <app:JiraProjectGraphView></app:JiraProjectGraphView>
+            <ItemsControl ItemsSource="{Binding GetVisibleProjects}" Width="{Binding Width}" Margin="5,5,5,5">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel></WrapPanel>
@@ -38,5 +39,4 @@
             </ItemsControl>
         </StackPanel>
     </Viewbox>
-
 </UserControl>

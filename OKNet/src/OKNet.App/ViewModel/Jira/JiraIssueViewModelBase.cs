@@ -58,7 +58,6 @@ namespace OKNet.App.ViewModel.Jira
                 Issues.Add(issueViewModel);
             }
 
-
             IssuesTotal = Issues.Count;
         }
 

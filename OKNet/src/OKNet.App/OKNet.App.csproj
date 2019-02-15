@@ -66,6 +66,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -87,6 +88,13 @@
     <Compile Include="Command\DataCommand.cs" />
     <Compile Include="Command\DelegateCommand.cs" />
     <Compile Include="Converter\BoolToVisibilityConverter.cs" />
+    <Compile Include="DesignJiraInProgressGraphViewModel.cs" />
+    <Compile Include="JiraProjectGraphView.xaml.cs">
+      <DependentUpon>JiraProjectGraphView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControl\Jira\JiraProjectStatusGraphItem.xaml.cs">
+      <DependentUpon>JiraProjectStatusGraphItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\Design\DesignJiraIssueViewModel.cs" />
     <Compile Include="UserControl\Jira\JiraIssueStatusView.xaml.cs">
       <DependentUpon>JiraIssueStatusView.xaml</DependentUpon>
@@ -132,6 +140,10 @@
     <Compile Include="ViewModel\WindowViewModel.cs" />
     <Compile Include="WebBrowserBehaviors.cs" />
     <Compile Include="WindowConfigConverter.cs" />
+    <Page Include="JiraProjectGraphView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UserControl\Jira\JiraIssueStatusView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -169,6 +181,10 @@
     <Page Include="UserControl\Jira\JiraInProgressIssueView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControl\Jira\JiraProjectStatusGraphItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControl\WebBrowserContainer.xaml">
       <SubType>Designer</SubType>

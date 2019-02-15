@@ -1,0 +1,48 @@
+<UserControl x:Class="OKNet.App.JiraProjectGraphView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:jira="clr-namespace:OKNet.App.UserControl.Jira"
+    xmlns:app="clr-namespace:OKNet.App"
+    mc:Ignorable="d"
+    d:DesignWidth="{Binding Width}" d:DesignHeight="{Binding GraphHeight}"
+    d:DataContext="{d:DesignInstance app:DesignJiraInProgressGraphViewModel, IsDesignTimeCreatable=True}" Background="White">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="10*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <ItemsControl ItemsSource="{Binding Ticks}" Padding="2">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical"></StackPanel>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Height="{Binding Height}" Text="{Binding DisplayText}"></TextBlock>
+                        <Separator Grid.Column="1" VerticalAlignment="Top"></Separator>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <ItemsControl Grid.Column="1" ItemsSource="{Binding IssuesCount}" Padding="2">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"></StackPanel>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <jira:JiraProjectStatusGraphItem DataContext="{Binding}" Width="100" Margin="1,0,1,0"></jira:JiraProjectStatusGraphItem>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>
