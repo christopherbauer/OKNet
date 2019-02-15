@@ -4,10 +4,10 @@ namespace OKNet.App.ViewModel.Design
     {
         public DesignProjectViewModel()
         {
-            Id = 2;
-            Name = "Inventory";
+            Id = 1;
+            Name = "OKNET";
             Width = 300;
-            Key = "I";
+            Key = "OK";
         }
     }
 }

@@ -83,7 +83,7 @@ namespace OKNet.App
 
                     bool lastPage = false;
                     var startAt = 0;
-                    
+
                     var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"), jiraConfig.Username, jiraConfigPassword, jiraQuery.ToString(), startAt);
                     if (issueResult.StatusCode == 200)
                     {
@@ -109,7 +109,8 @@ namespace OKNet.App
 
             }
 
-            DataContext = new WindowViewModel { Windows = new ObservableCollection<ViewModelBase>(windowConfigViewModels) };
+            var isDebugMode = configService.Get<bool>("isDebugMode");
+            DataContext = new WindowViewModel { Windows = new ObservableCollection<ViewModelBase>(windowConfigViewModels), IsDebugMode = isDebugMode };
 
             AppHeartbeatTimer.Elapsed += (sender, args) => Dispatcher.Invoke(RefreshHierarchy);
         }
@@ -168,7 +169,7 @@ namespace OKNet.App
                 }
             }
 
-            await Task.Run(() => Dispatcher.Invoke((Action) Callback));
+            await Task.Run(() => Dispatcher.Invoke((Action)Callback));
         }
 
         private async Task SetupJiraCompleteWindow(ConfigService configService, string pathString,
@@ -203,7 +204,7 @@ namespace OKNet.App
                             Name = model.name,
                             Key = model.key,
                             Id = Convert.ToInt32(model.id),
-                            Width = (int) (Convert.ToInt32(jiraConfig.Width) / 3m - 4)
+                            Width = (int)(Convert.ToInt32(jiraConfig.Width) / 3m - 4)
                         })),
                     IssuesTotal = issueResult.Data.total
                 };
@@ -215,7 +216,7 @@ namespace OKNet.App
 
         private void RefreshHierarchy()
         {
-            var viewModel = (WindowViewModel) DataContext;
+            var viewModel = (WindowViewModel)DataContext;
             foreach (var viewModelWindow in viewModel.Windows)
             {
                 viewModelWindow.Refresh();
