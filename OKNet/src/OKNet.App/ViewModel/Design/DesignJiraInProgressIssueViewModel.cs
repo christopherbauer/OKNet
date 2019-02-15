@@ -11,15 +11,15 @@ namespace OKNet.App.ViewModel.Design
             Width = "800";
             Height = "800";
             Projects = new ObservableCollection<ProjectViewModel>
-                {new ProjectViewModel {Key = "RATES", Id = 1, CountInProgress = 500, Name = "RATES"}};
+                {new ProjectViewModel {Key = "OKNET", Id = 1, CountInProgress = 500, Name = "ONKET Development"}};
             AddOrUpdateNewIssues(new List<IssueViewModel>
             {
                 new DesignIssueViewModel(),
                 new IssueViewModel
                 {
-                    Key = "RATES-100", Name = "Rates In Progress Item", ProjectId = 1, StatusCategory = "In Development",
+                    Key = "OKNET-100", Name = "OKNET Jira In Progress", ProjectId = 1, StatusCategory = "Development",
                     Updated = DateTime.UtcNow.AddHours(-3),
-                    Component = new ObservableCollection<ComponentViewModel> {new ComponentViewModel {Id = 1, Name = "RATES"}}
+                    Component = new ObservableCollection<ComponentViewModel> {new ComponentViewModel {Id = 1, Name = "OKNET"}}
                 }
             });
             RefreshProjectCounts();

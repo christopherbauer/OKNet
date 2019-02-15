@@ -9,13 +9,13 @@ namespace OKNet.App
     {
         public DesignIssueViewModel()
         {
-            Key = "RATES-1";
-            Status = "In Dev";
-            StatusCategory = "In Development";
-            Name = "Create Nightly Rate Plan";
-            ProjectId = 2;
+            Key = "OKNET-1";
+            Status = "In Development";
+            StatusCategory = "Development";
+            Name = "Create OKNET Kiosk Viewer WPF App";
+            ProjectId = 1;
             Component = new ObservableCollection<ComponentViewModel>
-                {new ComponentViewModel {Name = "RatesV2", Id = 1}};
+                {new ComponentViewModel {Name = "", Id = 1}};
             Updated = DateTime.Now.AddHours(-2);
         }
     }
