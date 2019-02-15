@@ -10,6 +10,12 @@ namespace OKNet.App.ViewModel
         private ObservableCollection<ViewModelBase> _windows;
         private bool _isDebugMode;
 
+        public bool IsDebugMode
+        {
+            get => _isDebugMode;
+            set => SetValue(ref _isDebugMode, value);
+        }
+
         public ObservableCollection<ViewModelBase> Windows
         {
             get => _windows;
@@ -17,11 +23,5 @@ namespace OKNet.App.ViewModel
         }
 
         public string AssemblyVersion => $"v{Assembly.GetExecutingAssembly().GetName().Version}";
-
-        public bool IsDebugMode
-        {
-            get => _isDebugMode;
-            set => SetValue(ref _isDebugMode, value);
-        }
     }
 }
