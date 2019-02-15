@@ -40,12 +40,14 @@ namespace OKNet.Core
 
         public IEnumerable<string> GetNames(string path)
         {
-            return Enumerable.Select(_simpleJsonConfigBuilder.GetAllValues(string.Empty), pair => pair.Key.Substring(path.Length).Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[0]).Distinct();
+            var keyValuePairs = _simpleJsonConfigBuilder.GetAllValues(string.Empty);
+            return Enumerable.Select(keyValuePairs.Where(pair => pair.Key.Substring(0,path.Length) == path), pair => pair.Key.Substring(path.Length).Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries)[0]).Distinct();
         }
 
         public T Get<T>(string keyPath)
         {
-            return (T)_simpleJsonConfigBuilder.GetAllValues(keyPath);
+            var keyValuePairs = _simpleJsonConfigBuilder.GetAllValues(keyPath).Single();
+            return (T)Convert.ChangeType(keyValuePairs.Value, typeof(T));
         }
     }
 }
