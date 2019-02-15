@@ -7,7 +7,7 @@ Both the machine and the display will need to be set to not sleep, this can be h
 
 Note that some organizations might enforce GPOs that turn off displays/sleep machines after a set amount of time. To determine if you are being affected by this, use CMD and run `gpresult /Scope User /v`.
 
-###Checklist
+### Checklist
 
 [ ] No GPO for sleeping the machine
 [ ] Power and Sleep Settings
