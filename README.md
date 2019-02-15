@@ -29,6 +29,18 @@ The core project is comprised of a WPF app in .NET Framework 4.6. This will even
 - OKNet.Core - Core functions which are not WPF-specific and have no WPF dependencies which can be utilized by many projects, IE a service for making REST requests and serializing them which would be used by multiple integration points
 - OKNet.Infrastructure.* - Add additional infrastructure projects as needed to isolate the different integrations from the main project.
 
+## Contributing
+
+### Branches 
+- master - Do not commit/pr to master, this is a branch of integrated changes after in-depth functional review
+- develop - PR to develop and changes that have been added will be tested off of this branch
+
+### Process
+- Create a PR with your changes to develop
+   - If you are familiar with rebase/squashing commits, please squash changes to a single set
+- These will be reviewed and merged to develop
+- Pending more in-depth testing, develop will be integrated to master
+
 ## Roadmap
 
  - [x] Proof of Concept
