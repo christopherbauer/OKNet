@@ -14,6 +14,21 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>0.1.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -50,6 +65,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -68,36 +84,39 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ViewModel\Design\DesignIssueViewModel.cs" />
-    <Compile Include="JiraIssueStatusView.xaml.cs">
+    <Compile Include="Command\DataCommand.cs" />
+    <Compile Include="Command\DelegateCommand.cs" />
+    <Compile Include="Converter\BoolToVisibilityConverter.cs" />
+    <Compile Include="ViewModel\Design\DesignJiraIssueViewModel.cs" />
+    <Compile Include="UserControl\Jira\JiraIssueStatusView.xaml.cs">
       <DependentUpon>JiraIssueStatusView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="JiraIssueView.xaml.cs">
+    <Compile Include="UserControl\Jira\JiraIssueView.xaml.cs">
       <DependentUpon>JiraIssueView.xaml</DependentUpon>
     </Compile>
     <Compile Include="JiraApiService.cs" />
-    <Compile Include="JiraIssueViewModelBase.cs" />
+    <Compile Include="ViewModel\Jira\JiraIssueViewModelBase.cs" />
     <Compile Include="ProjectView.xaml.cs">
       <DependentUpon>ProjectView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControl\JiraInProgressIssueView.xaml.cs">
+    <Compile Include="UserControl\Jira\JiraInProgressIssueView.xaml.cs">
       <DependentUpon>JiraInProgressIssueView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\Design\DesignBasicWebsiteViewModel.cs" />
     <Compile Include="UserControl\BasicWebsiteView.xaml.cs">
       <DependentUpon>BasicWebsiteView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\ComponentViewModel.cs" />
+    <Compile Include="ViewModel\Jira\JiraComponentViewModel.cs" />
     <Compile Include="GridHelpers.cs" />
     <Compile Include="JiraIconImageSourceService.cs" />
-    <Compile Include="UserControl\JiraCompletedIssueView.xaml.cs">
+    <Compile Include="UserControl\Jira\JiraCompletedIssueView.xaml.cs">
       <DependentUpon>JiraCompletedIssueView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\Design\DesignJiraInProgressIssueViewModel.cs" />
-    <Compile Include="ViewModel\Design\DesignProjectViewModel.cs" />
-    <Compile Include="ViewModel\JiraIssueViewModel.cs" />
-    <Compile Include="ViewModel\JiraInProgressIssueViewModel.cs" />
-    <Compile Include="ViewModel\JiraProjectViewModel.cs" />
+    <Compile Include="ViewModel\Design\DesignJiraProjectViewModel.cs" />
+    <Compile Include="ViewModel\Jira\JiraIssueViewModel.cs" />
+    <Compile Include="ViewModel\Jira\JiraInProgressIssueViewModel.cs" />
+    <Compile Include="ViewModel\Jira\JiraProjectViewModel.cs" />
     <Compile Include="UriConverter.cs" />
     <Compile Include="UserControl\WebBrowserContainer.xaml.cs">
       <DependentUpon>WebBrowserContainer.xaml</DependentUpon>
@@ -106,18 +125,18 @@
     <Compile Include="ViewModel\Design\DesignJiraCompletedIssueViewModel.cs" />
     <Compile Include="ViewModel\Design\DesignWebBrowserViewModel.cs" />
     <Compile Include="ViewModel\Design\DesignWindowViewModel.cs" />
-    <Compile Include="ViewModel\JiraCompletedIssueViewModel.cs" />
+    <Compile Include="ViewModel\Jira\JiraCompletedIssueViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="ViewModel\WebBrowserViewModel.cs" />
     <Compile Include="ViewModel\WindowConfigViewModel.cs" />
     <Compile Include="ViewModel\WindowViewModel.cs" />
     <Compile Include="WebBrowserBehaviors.cs" />
     <Compile Include="WindowConfigConverter.cs" />
-    <Page Include="JiraIssueStatusView.xaml">
+    <Page Include="UserControl\Jira\JiraIssueStatusView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="JiraIssueView.xaml">
+    <Page Include="UserControl\Jira\JiraIssueView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -125,7 +144,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UserControl\JiraCompletedIssueView.xaml">
+    <Page Include="UserControl\Jira\JiraCompletedIssueView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -147,7 +166,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="UserControl\JiraInProgressIssueView.xaml">
+    <Page Include="UserControl\Jira\JiraInProgressIssueView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -206,6 +225,17 @@
       <Name>OKNet.Infrastructure.Jira</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

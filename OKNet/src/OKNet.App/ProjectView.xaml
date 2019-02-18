@@ -5,8 +5,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:design="clr-namespace:OKNet.App.ViewModel.Design"
     mc:Ignorable="d"
-	d:DataContext="{d:DesignInstance design:DesignProjectViewModel, IsDesignTimeCreatable=True}">
-    <Grid Margin="2,1,2,1" Height="20px" Width="250px">
+	d:DataContext="{d:DesignInstance design:DesignJiraProjectViewModel, IsDesignTimeCreatable=True}">
+    <Grid Margin="2,1,2,1" Height="20px" Width="{Binding Width}">
         <Grid.Resources>
             <Style TargetType="TextBlock">
                 <Setter Property="VerticalAlignment" Value="Center"></Setter>

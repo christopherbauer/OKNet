@@ -12,6 +12,7 @@ namespace OKNet.App.ViewModel.Design
                 new DesignJiraCompletedIssueViewModel(),
                 new DesignJiraInProgressIssueViewModel(),
             });
+            IsDebugMode = true;
         }
     }
 }

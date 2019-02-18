@@ -3,35 +3,41 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:OKNet.App"
         xmlns:viewModel="clr-namespace:OKNet.App.ViewModel"
         xmlns:design="clr-namespace:OKNet.App.ViewModel.Design"
         xmlns:userControl="clr-namespace:OKNet.App.UserControl"
+        xmlns:jira="clr-namespace:OKNet.App.ViewModel.Jira"
+        xmlns:jira1="clr-namespace:OKNet.App.UserControl.Jira"
         mc:Ignorable="d"
         Title="MainWindow" WindowState="Maximized" WindowStartupLocation="CenterScreen" WindowStyle="None"
         d:DataContext="{d:DesignInstance design:DesignWindowViewModel, IsDesignTimeCreatable=True}" d:DesignWidth="1600">
     <Window.Resources>
-        <DataTemplate DataType="{x:Type viewModel:JiraCompletedIssueViewModel}">
-            <userControl:JiraCompletedIssueView></userControl:JiraCompletedIssueView>
+        <DataTemplate DataType="{x:Type jira:JiraCompletedIssueViewModel}">
+            <jira1:JiraCompletedIssueView></jira1:JiraCompletedIssueView>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewModel:JiraInProgressIssueViewModel}">
-            <userControl:JiraInProgressIssueView></userControl:JiraInProgressIssueView>
+        <DataTemplate DataType="{x:Type jira:JiraInProgressIssueViewModel}">
+            <jira1:JiraInProgressIssueView></jira1:JiraInProgressIssueView>
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:BasicWebsiteViewModel}">
             <userControl:BasicWebsiteView></userControl:BasicWebsiteView>
         </DataTemplate>
     </Window.Resources>
-    <ItemsControl ItemsSource="{Binding Windows}">
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <StackPanel Orientation="Horizontal" />
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <ContentControl Content="{Binding}">
-                </ContentControl>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
+    <Grid>
+        <ItemsControl ItemsSource="{Binding Windows}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ContentControl Content="{Binding}">
+                    </ContentControl>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Border Visibility="{Binding IsDebugMode, Converter={StaticResource BoolToVisibilityConverter}}" BorderThickness="1" BorderBrush="Silver" Background="AntiqueWhite" Padding=".5" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="{Binding AssemblyVersion}"></TextBlock>
+        </Border>
+    </Grid>
 </Window>

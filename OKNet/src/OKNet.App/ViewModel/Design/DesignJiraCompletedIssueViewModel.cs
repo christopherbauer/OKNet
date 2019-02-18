@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using OKNet.App.ViewModel.Jira;
 
 namespace OKNet.App.ViewModel.Design
 {
@@ -12,10 +13,10 @@ namespace OKNet.App.ViewModel.Design
             Height = "800";
             Projects = new ObservableCollection<JiraProjectViewModel>
             {
-                new JiraProjectViewModel { Id = 1, Name = "Central-Park", Key = "CP"},
-                new JiraProjectViewModel { Id = 2, Name = "Inventory", Key = "I"},
-                new JiraProjectViewModel { Id = 3, Name = "New Booking Engine", Key = "NBE" },
-                new JiraProjectViewModel { Id = 4, Name = "Booking Engine", Key = "BE" }
+                new JiraProjectViewModel { Id = 1, Name = "OKNET", Key = "OK"},
+                new JiraProjectViewModel { Id = 2, Name = "OKNETCore", Key = "OKCORE"},
+                new JiraProjectViewModel { Id = 3, Name = "OKNETJira", Key = "OKJira" },
+                new JiraProjectViewModel { Id = 4, Name = "OKNETCommon", Key = "OKCMN" }
             };
 
             var executions = 0;
@@ -23,17 +24,16 @@ namespace OKNet.App.ViewModel.Design
             DateTime GetUtcDropoff()
             {
                 executions++;
-                return DateTime.UtcNow.AddMinutes(-executions*random.Next(3, 20));
+                return DateTime.UtcNow.AddMinutes(-executions * random.Next(3, 20));
             }
-
-            AddNewIssues(new List<JiraIssueViewModel>
+            AddOrUpdateNewIssues(new List<JiraIssueViewModel>
             {
-                new JiraIssueViewModel { Updated=GetUtcDropoff(), Key = "RATES-1", Name = "Create Nightly Rate Plan", ProjectId = 2, Component = new ObservableCollection<ComponentViewModel> {new ComponentViewModel {Name = "RatesV2", Id = 1} } },
-                new JiraIssueViewModel { Updated=GetUtcDropoff(), Key = "RATES-2", Name = "Create Derived Rate Plan", ProjectId = 2, Component = new ObservableCollection<ComponentViewModel> {new ComponentViewModel {Name = "RatesV2", Id = 1} } },
-                new JiraIssueViewModel { Updated=GetUtcDropoff(), Key = "RATES-3", Name = "Create Package Rate Plan", ProjectId = 2, Component = new ObservableCollection<ComponentViewModel> {new ComponentViewModel {Name = "RatesV2", Id = 1} } },
-                new JiraIssueViewModel { Updated=GetUtcDropoff(), Key = "RATES-4", Name = "Create Interval Rate Plan", ProjectId = 2, Component = new ObservableCollection<ComponentViewModel> {new ComponentViewModel {Name = "RatesV2", Id = 1} } },
-                new JiraIssueViewModel { Updated=GetUtcDropoff(), Key = "CP-1", Name = "Create Park", ProjectId = 1, Component = new ObservableCollection<ComponentViewModel> {new ComponentViewModel {Name = "DevCP", Id = 2} } },
-                new JiraIssueViewModel { Updated=GetUtcDropoff(), Key = "NBE-1", Name = "Create new Booking Engine", ProjectId = 3, Component = new ObservableCollection<ComponentViewModel> {new ComponentViewModel {Name = "NBE", Id = 3} } }
+                new DesignJiraIssueViewModel(),
+                new JiraIssueViewModel { Updated=GetUtcDropoff(), Key = "OKNET-2", Name = "PoC Website ViewModel", ProjectId = 1, Component = new ObservableCollection<JiraComponentViewModel> {new JiraComponentViewModel {Name = "WPF", Id = 1} } },
+                new JiraIssueViewModel { Updated=GetUtcDropoff(), Key = "OKNET-3", Name = "PoC Jira Completed ViewModel", ProjectId = 1, Component = new ObservableCollection<JiraComponentViewModel> {new JiraComponentViewModel {Name = "JIRA", Id = 2} } },
+                new JiraIssueViewModel { Updated=GetUtcDropoff(), Key = "OKNET-4", Name = "PoC Jira In-Progress ViewModel", ProjectId = 1, Component = new ObservableCollection<JiraComponentViewModel> {new JiraComponentViewModel {Name = "JIRA", Id = 1} } },
+                new JiraIssueViewModel { Updated=GetUtcDropoff(), Key = "OKNETJira-1", Name = "Develop Completed Issue API Call", ProjectId = 3, Component = new ObservableCollection<JiraComponentViewModel> {new JiraComponentViewModel {Name = "", Id = 2} } },
+                new JiraIssueViewModel { Updated=GetUtcDropoff(), Key = "OKNETCommon-1", Name = "Develop configuration viewmodel base for kiosk settings", ProjectId = 4, Component = new ObservableCollection<JiraComponentViewModel> {new JiraComponentViewModel {Name = "WPF", Id = 3} } }
             });
             RefreshProjectCounts();
         }
