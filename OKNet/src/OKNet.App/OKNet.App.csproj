@@ -103,6 +103,9 @@
       <DependentUpon>JiraIssueView.xaml</DependentUpon>
     </Compile>
     <Compile Include="JiraApiService.cs" />
+    <Compile Include="ViewModel\Design\DesignJiraProjectIssueCountViewModel.cs" />
+    <Compile Include="ViewModel\Jira\JiraInProgressGraphViewModel.cs" />
+    <Compile Include="ViewModel\Jira\JiraIssueCountViewModel.cs" />
     <Compile Include="ViewModel\Jira\JiraIssueViewModelBase.cs" />
     <Compile Include="ProjectView.xaml.cs">
       <DependentUpon>ProjectView.xaml</DependentUpon>
@@ -124,6 +127,7 @@
     <Compile Include="ViewModel\Design\DesignJiraProjectViewModel.cs" />
     <Compile Include="ViewModel\Jira\JiraIssueViewModel.cs" />
     <Compile Include="ViewModel\Jira\JiraInProgressIssueViewModel.cs" />
+    <Compile Include="ViewModel\Jira\JiraProjectIssueCountViewModel.cs" />
     <Compile Include="ViewModel\Jira\JiraProjectViewModel.cs" />
     <Compile Include="UriConverter.cs" />
     <Compile Include="UserControl\WebBrowserContainer.xaml.cs">
@@ -134,6 +138,7 @@
     <Compile Include="ViewModel\Design\DesignWebBrowserViewModel.cs" />
     <Compile Include="ViewModel\Design\DesignWindowViewModel.cs" />
     <Compile Include="ViewModel\Jira\JiraCompletedIssueViewModel.cs" />
+    <Compile Include="ViewModel\TickValue.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="ViewModel\WebBrowserViewModel.cs" />
     <Compile Include="ViewModel\WindowConfigViewModel.cs" />

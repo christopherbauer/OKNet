@@ -6,14 +6,14 @@
     xmlns:jira="clr-namespace:OKNet.App.UserControl.Jira"
     xmlns:app="clr-namespace:OKNet.App"
     mc:Ignorable="d"
-    d:DesignWidth="{Binding Width}" d:DesignHeight="{Binding GraphHeight}"
+    d:DesignWidth="{Binding Width}" Height="{Binding GraphHeight}"
     d:DataContext="{d:DesignInstance app:DesignJiraInProgressGraphViewModel, IsDesignTimeCreatable=True}" Background="White">
-    <Grid>
+    <Grid Height="{Binding GraphHeight}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="10*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <ItemsControl ItemsSource="{Binding Ticks}" Padding="2">
+        <ItemsControl ItemsSource="{Binding Ticks}" Height="{Binding GetGraphHeight}" Margin="{Binding Margin}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Vertical"></StackPanel>
@@ -26,13 +26,16 @@
                             <ColumnDefinition Width="3*"></ColumnDefinition>
                             <ColumnDefinition Width="*"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Height="{Binding Height}" Text="{Binding DisplayText}"></TextBlock>
-                        <Separator Grid.Column="1" VerticalAlignment="Top"></Separator>
+                        <TextBlock Grid.Column="0" Height="{Binding Height}" Text="{Binding DisplayText}" Margin="0"></TextBlock>
+                        <Separator Grid.Column="1" VerticalAlignment="Top" Margin="0"></Separator>
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <ItemsControl Grid.Column="1" ItemsSource="{Binding IssuesCount}" Padding="2">
+        <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="1">
+
+        </Border>
+        <ItemsControl Grid.Column="1" ItemsSource="{Binding ProjectIssuesCount}" Height="{Binding GetGraphHeight}" Margin="{Binding Margin}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"></StackPanel>
@@ -40,7 +43,7 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <jira:JiraProjectStatusGraphItem DataContext="{Binding}" Width="100" Margin="1,0,1,0"></jira:JiraProjectStatusGraphItem>
+                    <jira:JiraProjectStatusGraphItem DataContext="{Binding}" Margin="1,0,1,0"></jira:JiraProjectStatusGraphItem>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

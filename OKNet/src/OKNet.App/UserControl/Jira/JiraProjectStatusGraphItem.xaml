@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:OKNet.App.UserControl.Jira"
              xmlns:design="clr-namespace:OKNet.App.ViewModel.Design"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="100" Background="White"
+             Height="{Binding Height}" Width="{Binding Width}" Background="White"
              d:DataContext="{d:DesignInstance design:DesignJiraProjectIssueCountViewModel, IsDesignTimeCreatable=True}">
     <Grid>
         <ItemsControl ItemsSource="{Binding ProjectIssues}">
@@ -18,7 +18,9 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Border Height="{Binding Height}" Background="{Binding BackgroundColor}">
-                        <TextBlock Text="{Binding Count}" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                        <Viewbox>
+                            <TextBlock Text="{Binding IssueCount}" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                        </Viewbox>
                     </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
