@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -9,8 +10,8 @@ namespace OKNet.App.ViewModel.Jira
         private int _width;
         private string _projectName;
         private int _height;
-        private ObservableCollection<JiraIssueCountViewModel> _projectIssues;
         private int _allProjectIssuesCount;
+        private ObservableCollection<JiraIssueCountViewModel> _projectIssues;
 
 
         public int ProjectId
@@ -68,11 +69,9 @@ namespace OKNet.App.ViewModel.Jira
                     jiraIssueCountViewModel.AllProjectIssueCountTotal = AllProjectIssuesCount;
                     totalLeftover += jiraIssueCountViewModel.Leftover;
                 }
-
-                for (var i = 0; totalLeftover >= 0; totalLeftover--)
+                for (var i = 0; i <= totalLeftover; i++)
                 {
                     ProjectIssues[i].HeightAdjustment = 1;
-                    i++;
                 }
             }
 

@@ -44,9 +44,9 @@ namespace OKNet.App.ViewModel.Jira
 
         private decimal GetHeight()
         {
-            return (Convert.ToDecimal(ParentHeight) * (IssueCount / (decimal) AllProjectIssueCountTotal));
+            return AllProjectIssueCountTotal > 0 ? (ParentHeight * ((decimal)IssueCount / AllProjectIssueCountTotal)) : 0;
         }
 
-        public decimal Leftover => Height-GetHeight();
+        public decimal Leftover => GetHeight()-Height;
     }
 }

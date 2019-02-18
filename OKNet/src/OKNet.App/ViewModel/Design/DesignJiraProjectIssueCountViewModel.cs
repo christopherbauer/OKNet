@@ -17,7 +17,6 @@ namespace OKNet.App.ViewModel.Design
             var inQaCount = 12;
             var pmReviewCount = 11;
             var doneCount = 54;
-            AllProjectIssuesCount = todoCount + inDevCount + inQaCount + pmReviewCount + doneCount;
             ProjectIssues = new ObservableCollection<JiraIssueCountViewModel>(new List<JiraIssueCountViewModel>
             {
                 new JiraIssueCountViewModel { BackgroundColor="Green", IssueCount=doneCount, Status="Done" },

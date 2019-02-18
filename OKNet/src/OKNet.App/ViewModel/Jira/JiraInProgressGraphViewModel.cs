@@ -12,6 +12,7 @@ namespace OKNet.App.ViewModel.Jira
         private string _graphHeight;
         private string _margin;
         protected int NumTicks = 10;
+        protected int _graphWidth;
 
         public string GetGraphHeight => (Convert.ToInt32(GraphHeight) - (Convert.ToInt32(Margin)*2)).ToString();
         public int GetStackedChartWidth => Width / ProjectIssuesCount.Count;
@@ -68,8 +69,8 @@ namespace OKNet.App.ViewModel.Jira
             foreach (var jiraProjectIssueCountViewModel in ProjectIssuesCount)
             {
                 jiraProjectIssueCountViewModel.Width = GetStackedChartWidth;
-                jiraProjectIssueCountViewModel.Height = Convert.ToInt32(GraphHeight);
                 jiraProjectIssueCountViewModel.AllProjectIssuesCount = IssuesTotal;
+                jiraProjectIssueCountViewModel.Height = Convert.ToInt32(GraphHeight);
                 jiraProjectIssueCountViewModel.Refresh();
             }
             base.Refresh();
