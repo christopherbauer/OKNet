@@ -106,7 +106,64 @@ namespace OKNet.App
 
                 if (windowConfig.Type == "jira-complete")
                 {
-                    SetupJiraCompleteWindow(configService, pathString, jiraApiService, windowConfigViewModels);
+                    var jiraConfig = configService.GetConfig<JiraConfig>(pathString);
+
+                    string url = $"https://{jiraConfig.ApiHost}";
+                    string apiBase = "/search";
+
+                    var jiraQuery = new JiraQuery().ResolvedSince(DateTime.Today).StatusCategoryIs(JiraStatusCategory.COMPLETE)
+                       .OrderBy("updated");
+
+
+                    var jiraConfigPassword = Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password));
+
+                    var projectsResult = new ApiRequestService().MakeRequestWithBasicAuth<List<ProjectApiModel>>(new Uri($"{url}/project"),
+                       jiraConfig.Username, jiraConfigPassword, "");
+
+                    var viewModel = new JiraInProgressIssueViewModel
+                    {
+                        Width = jiraConfig.Width,
+                        Height = jiraConfig.Height,
+                    };
+
+                    if (projectsResult.StatusCode == 200)
+                    {
+                        viewModel.Projects = new ObservableCollection<JiraProjectViewModel>(projectsResult.Data.Select(
+                            model =>
+                                new JiraProjectViewModel
+                                {
+                                    Name = model.name,
+                                    Key = model.key,
+                                    Id = Convert.ToInt32(model.id),
+                                    Width = (int)(Convert.ToInt32(jiraConfig.Width) / 3m - 4)
+                                }));
+                    }
+
+                    windowConfigViewModels.Add(viewModel);
+
+                    bool lastPage = false;
+                    var startAt = 0;
+
+                    var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"),
+                       jiraConfig.Username, jiraConfigPassword, $"{jiraQuery}&startAt={startAt}");
+
+                    if (issueResult.StatusCode == 200)
+                    {
+                        viewModel.IssuesTotal = issueResult.Data.total;
+                        viewModel.AddOrUpdateNewIssues(jiraApiService.ParseIssues(issueResult));
+                        viewModel.RefreshProjectCounts();
+                    }
+                    if (issueResult.Data.startAt + 50 >= issueResult.Data.total)
+                    {
+                        lastPage = true;
+                    }
+                    else
+                    {
+                        startAt += issueResult.Data.issues.Length;
+                    }
+
+                    SetupJiraWindow(lastPage, startAt, url, apiBase, jiraConfig, jiraConfigPassword, jiraQuery,
+                        viewModel, jiraApiService, issueResult.Data.total, JiraStatusCategory.COMPLETE);
                 }
 
             }
@@ -159,7 +216,7 @@ namespace OKNet.App
             void Callback()
             {
                 var issueResult = jiraApiService.MakeRequestWithBasicAuth<APIIssueRequestRoot>(
-                    new Uri($"{url}{apiBase}"), jiraConfig.Username, jiraConfigPassword, jiraQuery.ToString());
+                    new Uri($"{url}{apiBase}"), jiraConfig.Username, jiraConfigPassword, $"{jiraQuery}&startAt={startAt}");
                 if (issueResult.StatusCode == 200)
                 {
                     viewModel.AddOrUpdateNewIssues(jiraApiService.ParseIssues(issueResult));
@@ -172,47 +229,6 @@ namespace OKNet.App
             }
 
             await Task.Run(() => Dispatcher.Invoke((Action)Callback));
-        }
-
-        private async Task SetupJiraCompleteWindow(ConfigService configService, string pathString, JiraApiService jiraApiService, List<ViewModelBase> windowConfigViewModels)
-        {
-            var jiraConfig = configService.GetConfig<JiraConfig>(pathString);
-
-            string url = $"https://{jiraConfig.ApiHost}";
-            string apiBase = "/search";
-
-            var jiraQuery = new JiraQuery().ResolvedSince(DateTime.Today).StatusCategoryIs(JiraStatusCategory.COMPLETE)
-               .OrderBy("updated");
-
-
-            var jiraConfigPassword = Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password));
-
-            var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"),
-               jiraConfig.Username, jiraConfigPassword, jiraQuery.ToString());
-
-            var projects = new ApiRequestService().MakeRequestWithBasicAuth<List<ProjectApiModel>>(new Uri($"{url}/project"),
-               jiraConfig.Username, jiraConfigPassword, "");
-
-            if (issueResult.StatusCode == 200)
-            {
-                var item = new JiraCompletedIssueViewModel
-                {
-                    Width = jiraConfig.Width,
-                    Height = jiraConfig.Height,
-                    Projects = new ObservableCollection<JiraProjectViewModel>(projects.Data.Select(model =>
-                        new JiraProjectViewModel
-                        {
-                            Name = model.name,
-                            Key = model.key,
-                            Id = Convert.ToInt32(model.id),
-                            Width = (int)(Convert.ToInt32(jiraConfig.Width) / 3m - 4)
-                        })),
-                    IssuesTotal = issueResult.Data.total
-                };
-                item.AddOrUpdateNewIssues(jiraApiService.ParseIssues(issueResult));
-                item.RefreshProjectCounts();
-                windowConfigViewModels.Add(item);
-            }
         }
 
         private void RefreshHierarchy()
