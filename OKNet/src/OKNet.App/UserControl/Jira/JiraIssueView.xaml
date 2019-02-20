@@ -5,6 +5,7 @@
          xmlns:app="clr-namespace:OKNet.App"
          xmlns:design="clr-namespace:OKNet.App.ViewModel.Design"
          mc:Ignorable="d"
+        d:DesignWidth="500"
          d:DataContext="{d:DesignInstance design:DesignJiraIssueViewModel, IsDesignTimeCreatable=True}" Background="White">
         <Grid>
             <Grid.ColumnDefinitions>
