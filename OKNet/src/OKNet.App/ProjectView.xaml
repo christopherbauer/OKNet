@@ -26,6 +26,6 @@
             <TextBlock Text="{Binding Key}" FontSize="9"></TextBlock>
         </Border>
         <TextBlock Grid.Column="2" Text="{Binding Name}"></TextBlock>
-        <TextBlock Grid.Column="3" Text="{Binding CountCompleted}"></TextBlock>
+        <TextBlock Grid.Column="3" Text="{Binding Count}"></TextBlock>
     </Grid>
 </UserControl>
