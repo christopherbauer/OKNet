@@ -92,6 +92,7 @@ namespace OKNet.App
             {
                 Width = jiraConfig.Width,
                 Height = jiraConfig.Height,
+                PageSize = jiraConfig.PageSize
             };
 
             if (projectsResult.StatusCode == 200)
@@ -191,7 +192,7 @@ namespace OKNet.App
                 }
             }
 
-            await Task.Run(() => Dispatcher.Invoke((Action)Callback));
+            await Task.Run(() => Dispatcher.Invoke(Callback));
         }
 
         private void RefreshHierarchy()

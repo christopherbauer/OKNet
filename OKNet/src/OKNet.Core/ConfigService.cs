@@ -37,7 +37,7 @@ namespace OKNet.Core
                 {
                     var keyValuePair = collection.Single(pair => string.Equals(pair.Key.Substring(path.Length + 1),
                         propertyInfo.Name, StringComparison.CurrentCultureIgnoreCase));
-                    propertyInfo.SetValue(tReturn, keyValuePair.Value);
+                    propertyInfo.SetValue(tReturn, Convert.ChangeType(keyValuePair.Value, propertyInfo.PropertyType));
                 }
             }
 

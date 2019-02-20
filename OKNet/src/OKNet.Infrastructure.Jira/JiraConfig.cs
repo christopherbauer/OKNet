@@ -8,6 +8,7 @@ namespace OKNet.Infrastructure.Jira
         public string ApiHost { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+        public int PageSize { set; get; }
         public Dictionary<string,string> StatusColors { get; set; }
     }
 }

@@ -17,8 +17,7 @@ namespace OKNet.Core
 
             var client = new HttpClient {BaseAddress = baseAddress};
             client.DefaultRequestHeaders.Add("Authorization", basicAuth);
-            var requestUri = uriQuery;
-            var response = client.GetAsync(requestUri).Result;
+            var response = client.GetAsync(uriQuery).Result;
 
             if (response.IsSuccessStatusCode)
             {
