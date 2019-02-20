@@ -12,7 +12,7 @@ namespace OKNet.App.ViewModel.Design
             Width = "800";
             Height = "800";
             Projects = new ObservableCollection<JiraProjectViewModel>
-                {new JiraProjectViewModel {Key = "OKNET", Id = 1, CountInProgress = 500, Name = "ONKET Development"}};
+                {new JiraProjectViewModel {Key = "OKNET", Id = 1, Count = 500, Name = "ONKET Development"}};
             AddOrUpdateNewIssues(new List<JiraIssueViewModel>
             {
                 new DesignJiraIssueViewModel(),
@@ -23,7 +23,7 @@ namespace OKNet.App.ViewModel.Design
                     Component = new ObservableCollection<JiraComponentViewModel> {new JiraComponentViewModel {Id = 1, Name = "OKNET"}}
                 }
             });
-            RefreshProjectCounts();
+            Refresh();
         }
     }
 }

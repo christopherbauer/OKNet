@@ -5,7 +5,7 @@ namespace OKNet.App.ViewModel.Jira
 {
     public class JiraCompletedIssueViewModel : JiraIssueViewModelBase
     {
-        public ObservableCollection<JiraProjectViewModel> GetVisibleProjects => new ObservableCollection<JiraProjectViewModel>(Projects.Where(model => model.CountCompleted > 0).ToList());
-        public string GetIssue => $"{IssuesTotal} issue(s) Done today";
+        public override ObservableCollection<JiraProjectViewModel> GetVisibleProjects => new ObservableCollection<JiraProjectViewModel>(Projects.Where(model => model.Count > 0).ToList());
+        public override string GetIssue => $"{IssuesTotal} issue(s) Done today";
     }
 }

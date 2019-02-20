@@ -10,6 +10,7 @@ namespace OKNet.App.ViewModel.Jira
         private ObservableCollection<JiraIssueViewModel> _issues = new ObservableCollection<JiraIssueViewModel>();
         private ObservableCollection<JiraProjectViewModel> _projects;
         private int _issuesTotal;
+        private int _page;
 
         public int IssuesTotal
         {
@@ -25,19 +26,41 @@ namespace OKNet.App.ViewModel.Jira
 
         public ObservableCollection<JiraProjectViewModel> Projects
         {
-            get { return _projects; }
+            get => _projects;
             set
             {
                 SetValue(ref _projects, value);
-                OnPropertyChanged(nameof(JiraInProgressIssueViewModel.GetVisibleProjects));
+                OnPropertyChanged(nameof(GetVisibleProjects));
             }
         }
 
-        public void RefreshProjectCounts()
+        public int Page
+        {
+            get => _page;
+            set
+            {
+                SetValue(ref _page, value);
+                OnPropertyChanged(nameof(GetVisibleIssues));
+            }
+        }
+
+        public ObservableCollection<JiraIssueViewModel> GetVisibleIssues
+        {
+            get
+            {
+                return new ObservableCollection<JiraIssueViewModel>(Issues.OrderByDescending(model => model.Updated)
+                    .Skip(Page * 50).Take(50));
+            }
+        }
+
+        public virtual ObservableCollection<JiraProjectViewModel> GetVisibleProjects => new ObservableCollection<JiraProjectViewModel>(Projects.ToList());
+        public virtual string GetIssue => $"{IssuesTotal}";
+
+        private void RefreshProjectCounts()
         {
             foreach (var projectViewModel in Projects)
             {
-                projectViewModel.CountCompleted = Issues.Count(viewModel =>
+                projectViewModel.Count = Issues.Count(viewModel =>
                     viewModel.ProjectId == Convert.ToInt32(projectViewModel.Id));
             }
         }
@@ -58,12 +81,14 @@ namespace OKNet.App.ViewModel.Jira
                 Issues.Add(issueViewModel);
             }
 
-
             IssuesTotal = Issues.Count;
+            OnPropertyChanged(nameof(GetVisibleIssues));
+            OnPropertyChanged(nameof(GetIssue));
         }
 
         public override void Refresh()
         {
+            RefreshProjectCounts();
             foreach (var issueViewModel in Issues)
             {
                 issueViewModel.Refresh();
