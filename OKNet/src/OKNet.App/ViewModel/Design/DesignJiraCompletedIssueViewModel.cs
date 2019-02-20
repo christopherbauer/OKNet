@@ -11,6 +11,7 @@ namespace OKNet.App.ViewModel.Design
         {
             Width = "800";
             Height = "800";
+            Page = 0;
             Projects = new ObservableCollection<JiraProjectViewModel>
             {
                 new JiraProjectViewModel { Id = 1, Name = "OKNET", Key = "OK"},
@@ -18,7 +19,6 @@ namespace OKNet.App.ViewModel.Design
                 new JiraProjectViewModel { Id = 3, Name = "OKNETJira", Key = "OKJira" },
                 new JiraProjectViewModel { Id = 4, Name = "OKNETCommon", Key = "OKCMN" }
             };
-
             var executions = 0;
             var random = new Random();
             DateTime GetUtcDropoff()
@@ -35,7 +35,7 @@ namespace OKNet.App.ViewModel.Design
                 new JiraIssueViewModel { Updated=GetUtcDropoff(), Key = "OKNETJira-1", Name = "Develop Completed Issue API Call", ProjectId = 3, Component = new ObservableCollection<JiraComponentViewModel> {new JiraComponentViewModel {Name = "", Id = 2} } },
                 new JiraIssueViewModel { Updated=GetUtcDropoff(), Key = "OKNETCommon-1", Name = "Develop configuration viewmodel base for kiosk settings", ProjectId = 4, Component = new ObservableCollection<JiraComponentViewModel> {new JiraComponentViewModel {Name = "WPF", Id = 3} } }
             });
-            RefreshProjectCounts();
+            Refresh();
         }
     }
 }
