@@ -58,3 +58,5 @@ The core project is comprised of a WPF app in .NET Framework 4.6. This will even
    - [ ] Recently Completed View
  - [ ] Teams Integration
  - [ ] Jenkins Integration
+ - [ ] Add nlog logging to the project
+ - [ ] Major Refactorings to improve code quality - the PoC code is ugly
