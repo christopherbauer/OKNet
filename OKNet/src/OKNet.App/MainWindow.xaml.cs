@@ -67,7 +67,7 @@ namespace OKNet.App
 
                     var jiraConfigPassword = Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password));
 
-                    var projectsResult = new ApiRequestService().MakeRequestWithBasicAuth<List<ProjectApiModel>>(new Uri($"{url}/project"), jiraConfig.Username, jiraConfigPassword, "");
+                    var projectsResult = new ApiRequestService().MakeRequestWithBasicAuth<List<ProjectApiModel>>(new Uri($"{url}/project"), jiraConfig.Username, jiraConfigPassword, string.Empty);
 
                     var viewModel = new JiraInProgressIssueViewModel
                     {
@@ -118,7 +118,7 @@ namespace OKNet.App
                     var jiraConfigPassword = Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password));
 
                     var projectsResult = new ApiRequestService().MakeRequestWithBasicAuth<List<ProjectApiModel>>(new Uri($"{url}/project"),
-                       jiraConfig.Username, jiraConfigPassword, "");
+                       jiraConfig.Username, jiraConfigPassword, string.Empty);
 
                     var viewModel = new JiraCompletedIssueViewModel()
                     {
@@ -215,7 +215,7 @@ namespace OKNet.App
             void Callback()
             {
                 var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(
-                    new Uri($"{url}{apiBase}"), jiraConfig.Username, Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password)), jiraQuery.ToString());
+                    new Uri($"{url}{apiBase}"), jiraConfig.Username, Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password)), $"{jiraQuery}&startAt={startAt}");
 
                 if (issueResult.StatusCode == 200)
                 {
