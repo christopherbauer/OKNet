@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using OKNet.App.ViewModel;
 using OKNet.App.ViewModel.Jira;
@@ -23,11 +22,13 @@ namespace OKNet.App
         private Timer AppHeartbeatTimer = new Timer { Interval = (int)TimeSpan.FromSeconds(5).TotalMilliseconds };
         private readonly JiraApiService _jiraApiService;
         private readonly ConfigService _configService;
+        private readonly ApiRequestService _apiRequestService;
 
         public MainWindow()
         {
             _configService = new ConfigService();
             _jiraApiService = new JiraApiService(_configService);
+            _apiRequestService = new ApiRequestService();
 
             InitializeComponent();
 
@@ -59,64 +60,16 @@ namespace OKNet.App
 
                 if (windowConfig.Type == "jira-inprogress")
                 {
-                    var jiraConfig = _jiraApiService.GetJiraConfig(pathString);
+                    var initialJiraQuery = new JiraQuery().StatusCategoryIs(JiraStatusCategory.IN_PROGRESS).UpdatedSince(-30, JiraTimeDifference.Days).OrderBy("updated");
 
-                    string url = $"https://{jiraConfig.ApiHost}";
-
-                    var jiraQuery = new JiraQuery().StatusCategoryIs(JiraStatusCategory.IN_PROGRESS).UpdatedSince(-30, JiraTimeDifference.Days).OrderBy("updated");
-
-                    var jiraConfigPassword = Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password));
-
-                    var projectsResult = new ApiRequestService().MakeRequestWithBasicAuth<List<ProjectApiModel>>(new Uri($"{url}/project"), jiraConfig.Username, jiraConfigPassword, string.Empty);
-
-                    var viewModel = new JiraInProgressIssueViewModel
-                    {
-                        Width = jiraConfig.Width,
-                        Height = jiraConfig.Height,
-                    };
-
-                    if (projectsResult.StatusCode == 200)
-                    {
-                        viewModel.Projects = JiraApiService.ParseProjects(projectsResult, Convert.ToInt32(jiraConfig.Width));
-                    }
-                    windowConfigViewModels.Add(viewModel);
-
-                    InitializeIssueAutoUpdate(url, jiraConfig, jiraQuery, viewModel, _jiraApiService, JiraStatusCategory.IN_PROGRESS);
+                    InitializeJiraIssueViewModel<JiraInProgressIssueViewModel>(pathString, windowConfigViewModels, initialJiraQuery, JiraStatusCategory.IN_PROGRESS);
                 }
 
                 if (windowConfig.Type == "jira-complete")
                 {
-                    var jiraQuery = new JiraQuery().ResolvedSince(DateTime.Today).StatusCategoryIs(JiraStatusCategory.COMPLETE)
-                       .OrderBy("updated");
+                    var initialJiraQuery = new JiraQuery().ResolvedSince(DateTime.Today).StatusCategoryIs(JiraStatusCategory.COMPLETE).OrderBy("updated");
 
-                    var jiraConfig = _jiraApiService.GetJiraConfig(pathString);
-                    string url = $"https://{jiraConfig.ApiHost}";
-                    var jiraConfigPassword = Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password));
-                    var projectsResult = new ApiRequestService().MakeRequestWithBasicAuth<List<ProjectApiModel>>(new Uri($"{url}/project"),
-                       jiraConfig.Username, jiraConfigPassword, string.Empty);
-
-                    var viewModel = new JiraCompletedIssueViewModel
-                    {
-                        Width = jiraConfig.Width,
-                        Height = jiraConfig.Height,
-                    };
-
-                    if (projectsResult.StatusCode == 200)
-                    {
-                        viewModel.Projects = new ObservableCollection<JiraProjectViewModel>(projectsResult.Data.Select(
-                            model =>
-                                new JiraProjectViewModel
-                                {
-                                    Name = model.name,
-                                    Key = model.key,
-                                    Id = Convert.ToInt32(model.id),
-                                    Width = (int)(Convert.ToInt32(jiraConfig.Width) / 3m - 4)
-                                }));
-                    }
-
-                    windowConfigViewModels.Add(viewModel);
-
-                    InitializeIssueAutoUpdate(url, jiraConfig, jiraQuery, viewModel, _jiraApiService, JiraStatusCategory.COMPLETE);
+                    InitializeJiraIssueViewModel<JiraCompletedIssueViewModel>(pathString, windowConfigViewModels, initialJiraQuery, JiraStatusCategory.COMPLETE);
                 }
             }
 
@@ -126,13 +79,38 @@ namespace OKNet.App
             AppHeartbeatTimer.Elapsed += (sender, args) => Dispatcher.Invoke(RefreshHierarchy);
         }
 
+        private void InitializeJiraIssueViewModel<T>(string pathString, List<ViewModelBase> windowConfigViewModels, JiraQuery jiraQuery,
+            JiraStatusCategory jiraStatusCategory) where T : JiraIssueViewModelBase, new()
+        {
+            var jiraConfig = _jiraApiService.GetJiraConfig(pathString);
+            string url = $"https://{jiraConfig.ApiHost}";
+            var jiraConfigPassword = Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password));
+            var projectsResult = _apiRequestService.MakeRequestWithBasicAuth<List<ProjectApiModel>>(new Uri($"{url}/project"),
+                    jiraConfig.Username, jiraConfigPassword, string.Empty);
+
+            var viewModel = new T
+            {
+                Width = jiraConfig.Width,
+                Height = jiraConfig.Height,
+            };
+
+            if (projectsResult.StatusCode == 200)
+            {
+                viewModel.Projects = JiraApiService.ParseProjects(projectsResult, Convert.ToInt32(jiraConfig.Width));
+            }
+
+            windowConfigViewModels.Add(viewModel);
+
+            InitializeIssueAutoUpdate(url, jiraConfig, jiraQuery, viewModel, _jiraApiService, jiraStatusCategory);
+        }
+
         private void InitializeIssueAutoUpdate(string url, JiraConfig jiraConfig,
             JiraQuery jiraQuery, JiraIssueViewModelBase viewModel, JiraApiService jiraApiService,
             JiraStatusCategory jiraStatusCategory)
         {
             const string apiBase = "/search";
             
-            var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"),
+            var issueResult = _apiRequestService.MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"),
                 jiraConfig.Username, Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password)), jiraQuery.ToString());
 
             if (issueResult.StatusCode == 200)
@@ -150,8 +128,8 @@ namespace OKNet.App
                 startAt += issueResult.Data.issues.Length;
             }
 
-            SetupJiraWindow(lastPage, startAt, url, apiBase, jiraConfig, jiraQuery, viewModel, jiraApiService,
-                issueResult.Data.total, jiraStatusCategory);
+            SetupJiraWindow(url, apiBase, lastPage, startAt, jiraConfig, jiraQuery,
+                viewModel, jiraApiService, issueResult.Data.total, jiraStatusCategory);
         }
 
         private bool IsLastPage(int pageSize, int startAt, int total)
@@ -159,7 +137,8 @@ namespace OKNet.App
             return startAt + pageSize >= total;
         }
 
-        private async Task SetupJiraWindow(bool lastPage, int startAt, string url, string apiBase,
+        private async Task SetupJiraWindow(string url, string apiBase,
+            bool lastPage, int startAt,
             JiraConfig jiraConfig, JiraQuery jiraQuery, JiraIssueViewModelBase viewModel,
             JiraApiService jiraApiService, int issuesTotal, JiraStatusCategory status)
         {
@@ -198,7 +177,7 @@ namespace OKNet.App
         {
             void Callback()
             {
-                var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(
+                var issueResult = _apiRequestService.MakeRequestWithBasicAuth<APIIssueRequestRoot>(
                     new Uri($"{url}{apiBase}"), jiraConfig.Username, Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password)), $"{jiraQuery}&startAt={startAt}");
 
                 if (issueResult.StatusCode == 200)
