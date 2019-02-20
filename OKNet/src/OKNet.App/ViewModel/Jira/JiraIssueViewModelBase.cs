@@ -82,6 +82,7 @@ namespace OKNet.App.ViewModel.Jira
             }
 
             IssuesTotal = Issues.Count;
+            OnPropertyChanged(nameof(GetVisibleProjects));
             OnPropertyChanged(nameof(GetVisibleIssues));
             OnPropertyChanged(nameof(GetIssue));
         }
