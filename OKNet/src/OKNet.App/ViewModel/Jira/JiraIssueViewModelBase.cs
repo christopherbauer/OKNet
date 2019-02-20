@@ -11,6 +11,7 @@ namespace OKNet.App.ViewModel.Jira
         private ObservableCollection<JiraProjectViewModel> _projects;
         private int _issuesTotal;
         private int _page;
+        private int _pageSize;
 
         public int IssuesTotal
         {
@@ -49,12 +50,22 @@ namespace OKNet.App.ViewModel.Jira
             get
             {
                 return new ObservableCollection<JiraIssueViewModel>(Issues.OrderByDescending(model => model.Updated)
-                    .Skip(Page * 50).Take(50));
+                    .Skip(Page * PageSize).Take(PageSize));
             }
         }
 
         public virtual ObservableCollection<JiraProjectViewModel> GetVisibleProjects => new ObservableCollection<JiraProjectViewModel>(Projects.ToList());
         public virtual string GetIssue => $"{IssuesTotal}";
+
+        public int PageSize
+        {
+            get => _pageSize;
+            set
+            {
+                SetValue(ref _pageSize, value);
+                OnPropertyChanged(nameof(GetVisibleIssues));
+            }
+        }
 
         private void RefreshProjectCounts()
         {

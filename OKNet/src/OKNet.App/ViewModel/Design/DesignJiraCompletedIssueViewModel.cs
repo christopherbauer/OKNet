@@ -26,7 +26,6 @@ namespace OKNet.App.ViewModel.Design
                 executions++;
                 return DateTime.UtcNow.AddMinutes(-executions * random.Next(3, 20));
             }
-
             AddOrUpdateNewIssues(new List<JiraIssueViewModel>
             {
                 new DesignJiraIssueViewModel(),

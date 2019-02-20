@@ -32,7 +32,13 @@ namespace OKNet.Core
             var collection = _simpleJsonConfigBuilder.GetAllValues(path);
             foreach (var propertyInfo in props)
             {
-                propertyInfo.SetValue(tReturn, Enumerable.Single(collection, pair => string.Equals(pair.Key.Substring(path.Length + 1), propertyInfo.Name, StringComparison.CurrentCultureIgnoreCase)).Value);
+                if (collection.Any(pair => string.Equals(pair.Key.Substring(path.Length + 1), propertyInfo.Name,
+                    StringComparison.CurrentCultureIgnoreCase)))
+                {
+                    var keyValuePair = collection.Single(pair => string.Equals(pair.Key.Substring(path.Length + 1),
+                        propertyInfo.Name, StringComparison.CurrentCultureIgnoreCase));
+                    propertyInfo.SetValue(tReturn, Convert.ChangeType(keyValuePair.Value, propertyInfo.PropertyType));
+                }
             }
 
             return tReturn;
