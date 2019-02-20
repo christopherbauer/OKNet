@@ -20,10 +20,15 @@ namespace OKNet.App
     /// </summary>
     public partial class MainWindow : Window
     {
-        protected internal Timer AppHeartbeatTimer = new Timer { Interval = (int)TimeSpan.FromSeconds(5).TotalMilliseconds };
+        private Timer AppHeartbeatTimer = new Timer { Interval = (int)TimeSpan.FromSeconds(5).TotalMilliseconds };
+        private readonly JiraApiService _jiraApiService;
+        private readonly ConfigService _configService;
 
         public MainWindow()
         {
+            _configService = new ConfigService();
+            _jiraApiService = new JiraApiService(_configService);
+
             InitializeComponent();
 
             AppHeartbeatTimer.Start();
@@ -33,19 +38,16 @@ namespace OKNet.App
 
         private async void InitialLoad()
         {
-
-            var configService = new ConfigService();
-
-            var names = configService.GetNames("windows").ToList();
+            var names = _configService.GetNames("windows").ToList();
             var windowConfigViewModels = new List<ViewModelBase>();
             for (var i = 0; i < names.Count(); i++)
             {
                 var pathString = $"windows:{names[i]}";
                 Console.WriteLine(pathString);
-                var windowConfig = configService.GetConfig<WindowConfig>(pathString);
+                var windowConfig = _configService.GetConfig<WindowConfig>(pathString);
                 if (windowConfig.Type == "web")
                 {
-                    var websiteConfig = configService.GetConfig<WebsiteConfig>(pathString);
+                    var websiteConfig = _configService.GetConfig<WebsiteConfig>(pathString);
                     windowConfigViewModels.Add(new BasicWebsiteViewModel
                     {
                         Uri = websiteConfig.Uri,
@@ -55,13 +57,11 @@ namespace OKNet.App
                     });
                 }
 
-                var jiraApiService = new JiraApiService();
                 if (windowConfig.Type == "jira-inprogress")
                 {
-                    var jiraConfig = configService.GetConfig<JiraConfig>(pathString);
+                    var jiraConfig = _jiraApiService.GetJiraConfig(pathString);
 
                     string url = $"https://{jiraConfig.ApiHost}";
-                    string apiBase = "/search";
 
                     var jiraQuery = new JiraQuery().StatusCategoryIs(JiraStatusCategory.IN_PROGRESS).UpdatedSince(-30, JiraTimeDifference.Days).OrderBy("updated");
 
@@ -81,46 +81,21 @@ namespace OKNet.App
                     }
                     windowConfigViewModels.Add(viewModel);
 
-
-                    bool lastPage = false;
-                    var startAt = 0;
-
-                    var issueResult = jiraApiService.MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"), jiraConfig.Username, jiraConfigPassword, jiraQuery.ToString());
-                    if (issueResult.StatusCode == 200)
-                    {
-                        viewModel.IssuesTotal = issueResult.Data.total;
-                        viewModel.AddOrUpdateNewIssues(jiraApiService.ParseIssues(issueResult));
-                        viewModel.Refresh();
-                    }
-                    if (issueResult.Data.startAt + 50 >= issueResult.Data.total)
-                    {
-                        lastPage = true;
-                    }
-                    else
-                    {
-                        startAt += issueResult.Data.issues.Length;
-                    }
-
-                    SetupJiraWindow(lastPage, startAt, url, apiBase, jiraConfig, jiraQuery, viewModel, jiraApiService, issueResult.Data.total, JiraStatusCategory.IN_PROGRESS);
+                    InitializeIssueAutoUpdate(url, jiraConfig, jiraQuery, viewModel, _jiraApiService, JiraStatusCategory.IN_PROGRESS);
                 }
 
                 if (windowConfig.Type == "jira-complete")
                 {
-                    var jiraConfig = configService.GetConfig<JiraConfig>(pathString);
-
-                    string url = $"https://{jiraConfig.ApiHost}";
-                    string apiBase = "/search";
-
                     var jiraQuery = new JiraQuery().ResolvedSince(DateTime.Today).StatusCategoryIs(JiraStatusCategory.COMPLETE)
                        .OrderBy("updated");
 
-
+                    var jiraConfig = _jiraApiService.GetJiraConfig(pathString);
+                    string url = $"https://{jiraConfig.ApiHost}";
                     var jiraConfigPassword = Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password));
-
                     var projectsResult = new ApiRequestService().MakeRequestWithBasicAuth<List<ProjectApiModel>>(new Uri($"{url}/project"),
                        jiraConfig.Username, jiraConfigPassword, string.Empty);
 
-                    var viewModel = new JiraCompletedIssueViewModel()
+                    var viewModel = new JiraCompletedIssueViewModel
                     {
                         Width = jiraConfig.Width,
                         Height = jiraConfig.Height,
@@ -141,36 +116,47 @@ namespace OKNet.App
 
                     windowConfigViewModels.Add(viewModel);
 
-                    bool lastPage = false;
-                    var startAt = 0;
-
-                    var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"),
-                       jiraConfig.Username, jiraConfigPassword, $"{jiraQuery}&startAt={startAt}");
-
-                    if (issueResult.StatusCode == 200)
-                    {
-                        viewModel.IssuesTotal = issueResult.Data.total;
-                        viewModel.AddOrUpdateNewIssues(jiraApiService.ParseIssues(issueResult));
-                        viewModel.Refresh();
-                    }
-                    if (issueResult.Data.startAt + 50 >= issueResult.Data.total)
-                    {
-                        lastPage = true;
-                    }
-                    else
-                    {
-                        startAt += issueResult.Data.issues.Length;
-                    }
-
-                    SetupJiraWindow(lastPage, startAt, url, apiBase, jiraConfig, jiraQuery, viewModel, jiraApiService, issueResult.Data.total, JiraStatusCategory.COMPLETE);
+                    InitializeIssueAutoUpdate(url, jiraConfig, jiraQuery, viewModel, _jiraApiService, JiraStatusCategory.COMPLETE);
                 }
-
             }
 
-            var isDebugMode = configService.Get<bool>("isDebugMode");
+            var isDebugMode = _configService.Get<bool>("isDebugMode");
             DataContext = new WindowViewModel { Windows = new ObservableCollection<ViewModelBase>(windowConfigViewModels), IsDebugMode = isDebugMode };
 
             AppHeartbeatTimer.Elapsed += (sender, args) => Dispatcher.Invoke(RefreshHierarchy);
+        }
+
+        private void InitializeIssueAutoUpdate(string url, JiraConfig jiraConfig,
+            JiraQuery jiraQuery, JiraIssueViewModelBase viewModel, JiraApiService jiraApiService,
+            JiraStatusCategory jiraStatusCategory)
+        {
+            const string apiBase = "/search";
+            
+            var issueResult = new ApiRequestService().MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"),
+                jiraConfig.Username, Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password)), jiraQuery.ToString());
+
+            if (issueResult.StatusCode == 200)
+            {
+                viewModel.IssuesTotal = issueResult.Data.total;
+                viewModel.AddOrUpdateNewIssues(jiraApiService.ParseIssues(issueResult));
+                viewModel.Refresh();
+            }
+
+            var lastPage = IsLastPage(50, issueResult.Data.startAt, issueResult.Data.total);
+
+            var startAt = 0;
+            if (!lastPage)
+            {
+                startAt += issueResult.Data.issues.Length;
+            }
+
+            SetupJiraWindow(lastPage, startAt, url, apiBase, jiraConfig, jiraQuery, viewModel, jiraApiService,
+                issueResult.Data.total, jiraStatusCategory);
+        }
+
+        private bool IsLastPage(int pageSize, int startAt, int total)
+        {
+            return startAt + pageSize >= total;
         }
 
         private async Task SetupJiraWindow(bool lastPage, int startAt, string url, string apiBase,
@@ -183,11 +169,9 @@ namespace OKNet.App
 
                 await MakeAsyncRequest(url, apiBase, jiraConfig, jiraQuery, viewModel, jiraApiService, at);
 
-                if (startAt + 50 >= issuesTotal)
-                {
-                    lastPage = true;
-                }
-                else
+                lastPage = IsLastPage(50, startAt, issuesTotal);
+
+                if (!lastPage)
                 {
                     startAt += 50;
                 }
