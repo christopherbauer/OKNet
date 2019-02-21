@@ -77,6 +77,19 @@ namespace OKNet.App.ViewModel.Jira
             { "Ready for business", "LightSkyBlue" },
         };
 
+        public override bool Equals(object obj)
+        {
+            var model = obj as JiraIssueViewModel;
+            return model != null &&
+                   _name == model._name &&
+                   _key == model._key &&
+//                   EqualityComparer<ObservableCollection<JiraComponentViewModel>>.Default.Equals(_component, model._component) &&
+                   _projectId == model._projectId &&
+                   _updated == model._updated &&
+                   _statusCategory == model._statusCategory &&
+                   _status == model._status;
+        }
+
         public override void Refresh()
         {
             UpdatedCommand.Execute(null);

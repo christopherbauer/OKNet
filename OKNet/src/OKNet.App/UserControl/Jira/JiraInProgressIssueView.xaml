@@ -36,7 +36,7 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+            <TextBlock HorizontalAlignment="Right" Text="{Binding GetPageNumber}" Margin="0,0,5,0"></TextBlock>
         </StackPanel>
     </Viewbox>
-
 </UserControl>
