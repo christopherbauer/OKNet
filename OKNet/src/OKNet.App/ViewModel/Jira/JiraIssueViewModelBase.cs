@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using NLog;
 using OKNet.App.Command;
 
 namespace OKNet.App.ViewModel.Jira
 {
     public class JiraIssueViewModelBase : WindowConfigViewModel
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private ObservableCollection<JiraIssueViewModel> _issues = new ObservableCollection<JiraIssueViewModel>();
         private ObservableCollection<JiraProjectViewModel> _projects;
         private int _issuesTotal;
@@ -21,7 +24,7 @@ namespace OKNet.App.ViewModel.Jira
             TurnPageCommand = new DelegateCommand(() =>
             {
                 var newPage = (Page < TotalPages ? Page + 1 : 1);
-                Console.Write($"Set page from {Page} to {newPage} ({GetType().Name})");
+                Logger.Trace($"Set page from {Page} to {newPage} ({GetType().Name})");
                 Page = newPage;
 
             }, o => true);
@@ -89,7 +92,7 @@ namespace OKNet.App.ViewModel.Jira
                 if (IssuesTotal > 0)
                 {
                     var totalPages = (IssuesTotal / PageSize) + (IssuesTotal % PageSize > 0 ? 1 : 0);
-                    Console.WriteLine($"New Total Pages: {totalPages} ({IssuesTotal} / {PageSize}) ({GetType().Name})");
+                    Logger.Trace($"New Total Pages: {totalPages} ({IssuesTotal} / {PageSize}) ({GetType().Name})");
                     return totalPages;
                 }
 
