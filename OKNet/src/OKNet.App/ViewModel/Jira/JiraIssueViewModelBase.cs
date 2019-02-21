@@ -12,7 +12,7 @@ namespace OKNet.App.ViewModel.Jira
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private ObservableCollection<JiraIssueViewModel> _issues = new ObservableCollection<JiraIssueViewModel>();
+        private Dictionary<string, JiraIssueViewModel> _issues = new Dictionary<string, JiraIssueViewModel>();
         private ObservableCollection<JiraProjectViewModel> _projects;
         private int _issuesTotal;
         private int _page = 1;
@@ -35,7 +35,7 @@ namespace OKNet.App.ViewModel.Jira
             set => SetValue(ref _issuesTotal, value);
         }
 
-        public ObservableCollection<JiraIssueViewModel> Issues
+        public Dictionary<string, JiraIssueViewModel> Issues
         {
             get => _issues;
             set => SetValue(ref _issues, value);
@@ -66,7 +66,7 @@ namespace OKNet.App.ViewModel.Jira
         {
             get
             {
-                return new ObservableCollection<JiraIssueViewModel>(Issues.OrderByDescending(model => model.Updated)
+                return new ObservableCollection<JiraIssueViewModel>(Issues.Values
                     .Skip((Page-1) * PageSize).Take(PageSize).ToList());
             }
         }
@@ -103,24 +103,28 @@ namespace OKNet.App.ViewModel.Jira
         public virtual void AddOrUpdateNewIssues(IEnumerable<JiraIssueViewModel> issueViewModels)
         {
             //This could be better but YOLO
+            Logger.Trace($"------- PERF - Begin {nameof(AddOrUpdateNewIssues)}");
             bool isDirty = false;
-            var issuesToUpdate = issueViewModels.Where(model => Issues.Any(currentIssues => currentIssues.Key == model.Key));
-            foreach (var issueViewModel in issuesToUpdate)
+            foreach (var jiraIssueViewModel in issueViewModels)
             {
-                var jiraIssueViewModel = Issues.Single(currentIssue => currentIssue.Key == issueViewModel.Key);
-                if(!issueViewModel.Equals(jiraIssueViewModel))
+                if (Issues.ContainsKey(jiraIssueViewModel.Key))
                 {
-                    Issues.Remove(jiraIssueViewModel);
+                    var issueViewModel = Issues[jiraIssueViewModel.Key];
+                    if (!issueViewModel.Equals(jiraIssueViewModel))
+                    {
+                        issueViewModel.Updated = jiraIssueViewModel.Updated;
+                        issueViewModel.StatusCategory = jiraIssueViewModel.StatusCategory;
+                        issueViewModel.Status = jiraIssueViewModel.Status;
+                        issueViewModel.Name = jiraIssueViewModel.Name;
+                        issueViewModel.ProjectId = jiraIssueViewModel.ProjectId;
+                        isDirty = true;
+                    }
+                }
+                else
+                {
+                    Issues.Add(jiraIssueViewModel.Key, jiraIssueViewModel);
                     isDirty = true;
                 }
-            }
-
-            var newIssues = issueViewModels.OrderByDescending(model => model.Updated)
-                .Where(model => Issues.All(viewModel => viewModel.Key != model.Key));
-            foreach (var issueViewModel in newIssues)
-            {
-                Issues.Add(issueViewModel);
-                isDirty = true;
             }
 
             if (isDirty)
@@ -134,13 +138,14 @@ namespace OKNet.App.ViewModel.Jira
                 OnPropertyChanged(nameof(GetVisibleIssues));
                 OnPropertyChanged(nameof(GetIssue));
             }
+            Logger.Trace($"------- PERF - End {nameof(AddOrUpdateNewIssues)}");
         }
 
         private void RefreshProjectCounts()
         {
             foreach (var projectViewModel in Projects)
             {
-                projectViewModel.Count = Issues.Count(viewModel =>
+                projectViewModel.Count = Issues.Values.Count(viewModel =>
                     viewModel.ProjectId == Convert.ToInt32(projectViewModel.Id));
             }
         }
@@ -150,7 +155,7 @@ namespace OKNet.App.ViewModel.Jira
             RefreshProjectCounts();
             foreach (var issueViewModel in Issues)
             {
-                issueViewModel.Refresh();
+                issueViewModel.Value.Refresh();
             }
         }
     }
