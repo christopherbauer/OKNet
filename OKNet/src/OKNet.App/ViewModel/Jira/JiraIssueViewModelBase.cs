@@ -66,7 +66,7 @@ namespace OKNet.App.ViewModel.Jira
         {
             get
             {
-                return new ObservableCollection<JiraIssueViewModel>(Issues.Values
+                return new ObservableCollection<JiraIssueViewModel>(Issues.Values.OrderByDescending(model => model.Updated)
                     .Skip((Page-1) * PageSize).Take(PageSize).ToList());
             }
         }

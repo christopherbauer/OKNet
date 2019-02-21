@@ -23,5 +23,12 @@ namespace OKNet.App.ViewModel
             get => _isDebugMode;
             set => SetValue(ref _isDebugMode, value);
         }
+
+        public override void Refresh()
+        {
+            OnPropertyChanged(nameof(Windows));
+
+            base.Refresh();
+        }
     }
 }

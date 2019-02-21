@@ -37,11 +37,18 @@ namespace OKNet.App
 
             AppHeartbeatTimer.Start();
 
-            InitialLoad();
+            var isDebugMode = _configService.Get<bool>("isDebugMode");
+            Logger.Debug($"Initializing BEGIN {nameof(WindowViewModel)}");
+            var windowViewModel = new WindowViewModel { Windows = new ObservableCollection<ViewModelBase>(), IsDebugMode = isDebugMode };
+            DataContext = windowViewModel;
+            Logger.Debug($"Initializing END {nameof(WindowViewModel)}");
+
+            Dispatcher.InvokeAsync(() => InitialLoad(windowViewModel));
         }
 
-        private async void InitialLoad()
+        private async Task InitialLoad(WindowViewModel windowViewModel)
         {
+
             var names = _configService.GetNames("windows").ToList();
             var windowConfigViewModels = new List<ViewModelBase>();
             for (var i = 0; i < names.Count(); i++)
@@ -65,33 +72,37 @@ namespace OKNet.App
                 {
                     var initialJiraQuery = new JiraQuery().StatusCategoryIs(JiraStatusCategory.IN_PROGRESS).UpdatedSince(-30, JiraTimeDifference.Days).OrderBy("updated");
 
-                    InitializeJiraIssueViewModel<JiraInProgressIssueViewModel>(pathString, windowConfigViewModels, initialJiraQuery, JiraStatusCategory.IN_PROGRESS);
+                    Logger.Debug($"Initializing BEGIN {nameof(JiraInProgressIssueViewModel)}");
+                    var viewModel = await InitializeJiraIssueViewModel<JiraInProgressIssueViewModel>(pathString, initialJiraQuery, JiraStatusCategory.IN_PROGRESS);
+                    windowViewModel.Windows.Add(viewModel);
+                    Logger.Debug($"Initializing END {nameof(JiraInProgressIssueViewModel)}");
                 }
                 else if (windowConfig.Type == "jira-complete")
                 {
                     var initialJiraQuery = new JiraQuery().ResolvedSince(DateTime.Today).StatusCategoryIs(JiraStatusCategory.COMPLETE).OrderBy("updated");
 
-                    InitializeJiraIssueViewModel<JiraCompletedIssueViewModel>(pathString, windowConfigViewModels, initialJiraQuery, JiraStatusCategory.COMPLETE);
+                    Logger.Debug($"Initializing BEGIN {nameof(JiraCompletedIssueViewModel)}");
+                    var viewModel = await InitializeJiraIssueViewModel<JiraCompletedIssueViewModel>(pathString, initialJiraQuery, JiraStatusCategory.COMPLETE);
+                    windowViewModel.Windows.Add(viewModel);
+                    Logger.Debug($"Initializing END {nameof(JiraCompletedIssueViewModel)}");
                 }
                 else
                 {
                     Logger.Debug($"Unrecognized type {windowConfig.Type}");
                 }
             }
-
-            var isDebugMode = _configService.Get<bool>("isDebugMode");
-            DataContext = new WindowViewModel { Windows = new ObservableCollection<ViewModelBase>(windowConfigViewModels), IsDebugMode = isDebugMode };
+            windowViewModel.Refresh();
 
             AppHeartbeatTimer.Elapsed += (sender, args) => Dispatcher.Invoke(RefreshHierarchy);
         }
 
-        private void InitializeJiraIssueViewModel<T>(string pathString, List<ViewModelBase> windowConfigViewModels, JiraQuery jiraQuery,
+        private async Task<WindowConfigViewModel> InitializeJiraIssueViewModel<T>(string pathString, JiraQuery jiraQuery,
             JiraStatusCategory jiraStatusCategory) where T : JiraIssueViewModelBase, new()
         {
             var jiraConfig = _jiraApiService.GetJiraConfig(pathString);
             string url = $"https://{jiraConfig.ApiHost}";
             var jiraConfigPassword = Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password));
-            var projectsResult = _apiRequestService.MakeRequestWithBasicAuth<List<ProjectApiModel>>(new Uri($"{url}/project"),
+            var projectsResult = await _apiRequestService.MakeRequestWithBasicAuthAsync<List<ProjectApiModel>>(new Uri($"{url}/project"),
                     jiraConfig.Username, jiraConfigPassword, string.Empty);
 
             var viewModel = new T
@@ -106,18 +117,18 @@ namespace OKNet.App
                 viewModel.Projects = JiraApiService.ParseProjects(projectsResult, Convert.ToInt32(jiraConfig.Width));
             }
 
-            windowConfigViewModels.Add(viewModel);
-
             InitializeIssueAutoUpdate(url, jiraConfig, jiraQuery, viewModel, _jiraApiService, jiraStatusCategory);
+
+            return viewModel;
         }
 
-        private void InitializeIssueAutoUpdate(string url, JiraConfig jiraConfig,
+        private async void InitializeIssueAutoUpdate(string url, JiraConfig jiraConfig,
             JiraQuery jiraQuery, JiraIssueViewModelBase viewModel, JiraApiService jiraApiService,
             JiraStatusCategory jiraStatusCategory)
         {
             const string apiBase = "/search";
-            
-            var issueResult = _apiRequestService.MakeRequestWithBasicAuth<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"),
+
+            var issueResult = await _apiRequestService.MakeRequestWithBasicAuthAsync<APIIssueRequestRoot>(new Uri($"{url}{apiBase}"),
                 jiraConfig.Username, Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password)), jiraQuery.ToString());
 
             if (issueResult.StatusCode == 200)
@@ -135,7 +146,7 @@ namespace OKNet.App
                 startAt += issueResult.Data.issues.Length;
             }
 
-            SetupJiraWindow(url, apiBase, lastPage, startAt, jiraConfig, jiraQuery,
+            await SetupJiraWindow(url, apiBase, lastPage, startAt, jiraConfig, jiraQuery,
                 viewModel, jiraApiService, issueResult.Data.total, jiraStatusCategory);
         }
 
@@ -170,9 +181,9 @@ namespace OKNet.App
             var pageRotationRate = jiraConfig.PageRotationRate;
             AppHeartbeatTimer.Elapsed += delegate
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.Invoke(async () =>
                 {
-                    if(pageRotation)
+                    if (pageRotation)
                         if (DateTime.Now.Subtract(lastPageUpdate) > TimeSpan.FromSeconds(pageRotationRate))
                         {
                             Logger.Trace($"Page update {viewModel.GetType().Name}");
@@ -182,8 +193,8 @@ namespace OKNet.App
 
                     if (DateTime.Now.Subtract(lastUpdate) > TimeSpan.FromSeconds(refreshRate))
                     {
-                        Logger.Trace($"Try update {Enum.GetName(typeof(JiraStatusCategory),status)}");
-                        MakeAsyncRequest(url, apiBase, jiraConfig, new JiraQuery().StatusCategoryIs(status).UpdatedSince(-15, JiraTimeDifference.Minutes).OrderBy("updated"), viewModel, jiraApiService, 0);
+                        Logger.Trace($"Try update {Enum.GetName(typeof(JiraStatusCategory), status)}");
+                        await MakeAsyncRequest(url, apiBase, jiraConfig, new JiraQuery().StatusCategoryIs(status).UpdatedSince(-15, JiraTimeDifference.Minutes).OrderBy("updated"), viewModel, jiraApiService, 0);
                         lastUpdate = DateTime.Now;
                     }
                 });
@@ -194,9 +205,9 @@ namespace OKNet.App
         private async Task MakeAsyncRequest(string url, string apiBase, JiraConfig jiraConfig,
             JiraQuery jiraQuery, JiraIssueViewModelBase viewModel, JiraApiService jiraApiService, int startAt)
         {
-            void Callback()
+            async void Callback()
             {
-                var issueResult = _apiRequestService.MakeRequestWithBasicAuth<APIIssueRequestRoot>(
+                var issueResult = await _apiRequestService.MakeRequestWithBasicAuthAsync<APIIssueRequestRoot>(
                     new Uri($"{url}{apiBase}"), jiraConfig.Username, Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password)), $"{jiraQuery}&startAt={startAt}");
 
                 if (issueResult.StatusCode == 200)
