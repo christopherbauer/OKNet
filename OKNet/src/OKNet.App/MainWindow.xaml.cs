@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using NLog;
 using OKNet.App.ViewModel;
 using OKNet.App.ViewModel.Jira;
 using OKNet.Common;
@@ -19,6 +20,8 @@ namespace OKNet.App
     /// </summary>
     public partial class MainWindow : Window
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private Timer AppHeartbeatTimer = new Timer { Interval = (int)TimeSpan.FromSeconds(5).TotalMilliseconds };
         private readonly JiraApiService _jiraApiService;
         private readonly ConfigService _configService;
@@ -44,8 +47,9 @@ namespace OKNet.App
             for (var i = 0; i < names.Count(); i++)
             {
                 var pathString = $"windows:{names[i]}";
-                Console.WriteLine(pathString);
                 var windowConfig = _configService.GetConfig<WindowConfig>(pathString);
+                Logger.Debug($"Configuring from config path '{pathString}' type of {windowConfig.Type}");
+
                 if (windowConfig.Type == "web")
                 {
                     var websiteConfig = _configService.GetConfig<WebsiteConfig>(pathString);
@@ -57,19 +61,21 @@ namespace OKNet.App
                         Height = websiteConfig.Height
                     });
                 }
-
-                if (windowConfig.Type == "jira-inprogress")
+                else if (windowConfig.Type == "jira-inprogress")
                 {
                     var initialJiraQuery = new JiraQuery().StatusCategoryIs(JiraStatusCategory.IN_PROGRESS).UpdatedSince(-30, JiraTimeDifference.Days).OrderBy("updated");
 
                     InitializeJiraIssueViewModel<JiraInProgressIssueViewModel>(pathString, windowConfigViewModels, initialJiraQuery, JiraStatusCategory.IN_PROGRESS);
                 }
-
-                if (windowConfig.Type == "jira-complete")
+                else if (windowConfig.Type == "jira-complete")
                 {
                     var initialJiraQuery = new JiraQuery().ResolvedSince(DateTime.Today).StatusCategoryIs(JiraStatusCategory.COMPLETE).OrderBy("updated");
 
                     InitializeJiraIssueViewModel<JiraCompletedIssueViewModel>(pathString, windowConfigViewModels, initialJiraQuery, JiraStatusCategory.COMPLETE);
+                }
+                else
+                {
+                    Logger.Debug($"Unrecognized type {windowConfig.Type}");
                 }
             }
 
@@ -169,14 +175,14 @@ namespace OKNet.App
                     if(pageRotation)
                         if (DateTime.Now.Subtract(lastPageUpdate) > TimeSpan.FromSeconds(pageRotationRate))
                         {
-                            Console.WriteLine($"Page update {viewModel.GetType().Name}");
+                            Logger.Trace($"Page update {viewModel.GetType().Name}");
                             viewModel.TurnPageCommand.Execute(null);
                             lastPageUpdate = DateTime.Now;
                         }
 
                     if (DateTime.Now.Subtract(lastUpdate) > TimeSpan.FromSeconds(refreshRate))
                     {
-                        Console.WriteLine($"Try update {Enum.GetName(typeof(JiraStatusCategory),status)}");
+                        Logger.Trace($"Try update {Enum.GetName(typeof(JiraStatusCategory),status)}");
                         MakeAsyncRequest(url, apiBase, jiraConfig, new JiraQuery().StatusCategoryIs(status).UpdatedSince(-15, JiraTimeDifference.Minutes).OrderBy("updated"), viewModel, jiraApiService, 0);
                         lastUpdate = DateTime.Now;
                     }
