@@ -158,11 +158,23 @@ namespace OKNet.App
             }
 
             var lastUpdate = DateTime.Now;
+            var refreshRate = jiraConfig.RefreshRate;
+            var lastPageUpdate = DateTime.Now;
+            var pageRotation = jiraConfig.PageRotation;
+            var pageRotationRate = jiraConfig.PageRotationRate;
             AppHeartbeatTimer.Elapsed += delegate
             {
                 Dispatcher.Invoke(() =>
                 {
-                    if (DateTime.Now.Subtract(lastUpdate) > TimeSpan.FromSeconds(15))
+                    if(pageRotation)
+                        if (DateTime.Now.Subtract(lastPageUpdate) > TimeSpan.FromSeconds(pageRotationRate))
+                        {
+                            Console.WriteLine($"Page update {viewModel.GetType().Name}");
+                            viewModel.TurnPageCommand.Execute(null);
+                            lastPageUpdate = DateTime.Now;
+                        }
+
+                    if (DateTime.Now.Subtract(lastUpdate) > TimeSpan.FromSeconds(refreshRate))
                     {
                         Console.WriteLine($"Try update {Enum.GetName(typeof(JiraStatusCategory),status)}");
                         MakeAsyncRequest(url, apiBase, jiraConfig, new JiraQuery().StatusCategoryIs(status).UpdatedSince(-15, JiraTimeDifference.Minutes).OrderBy("updated"), viewModel, jiraApiService, 0);

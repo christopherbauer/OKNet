@@ -2,7 +2,27 @@
 {
     public class JiraComponentViewModel : ViewModelBase
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        private int _id;
+        private string _name;
+
+        public int Id
+        {
+            get => _id;
+            set => SetValue(ref _id, value);
+        }
+
+        public string Name
+        {
+            get => _name;
+            set => SetValue(ref _name, value);
+        }
+
+        public override bool Equals(object obj)
+        {
+            var model = obj as JiraComponentViewModel;
+            return model != null &&
+                   _id == model._id &&
+                   _name == model._name;
+        }
     }
 }
