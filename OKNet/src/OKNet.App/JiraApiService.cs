@@ -32,6 +32,7 @@ namespace OKNet.App
                         })),
                     StatusCategoryName = model.fields.status.statusCategory.name,
                     StatusCategoryKey = model.fields.status.statusCategory.key,
+                    ResolutionDate = model.fields.resolutiondate,
                     Status = model.fields.status.name,
                     ProjectId = Convert.ToInt32(model.fields.project.id),
                     Updated = model.fields.updated

@@ -102,9 +102,29 @@ namespace OKNet.App.ViewModel.Jira
 
         public virtual void AddOrUpdateNewIssues(IEnumerable<JiraIssueViewModel> issueViewModels)
         {
-            //This could be better but YOLO
-            bool isDirty = false;
-            var issuesToUpdate = issueViewModels.Where(model => Issues.Any(currentIssues => currentIssues.Key == model.Key));
+            AddOrUpdateNewIssues(issueViewModels, model => false);
+        }
+
+        public virtual void AddOrUpdateNewIssues(IEnumerable<JiraIssueViewModel> issueViewModels, Func<JiraIssueViewModel, bool> removalPredicate)
+        {
+            //Efficiency
+            var issueViewModelList = issueViewModels.ToList();
+
+            var removeIssueViewModels = issueViewModelList.Where(removalPredicate).ToList();
+            var isDirty = false;
+            foreach (var viewModel in removeIssueViewModels)
+            {
+                var issueViewModel = Issues.SingleOrDefault(currentIssue => currentIssue.Key == viewModel.Key);
+                if (issueViewModel != null && !viewModel.Equals(issueViewModel))
+                {
+                    Issues.Remove(issueViewModel);
+                    isDirty = true;
+                }
+            }
+
+            var updateIssueViewModels = issueViewModelList.Except(removeIssueViewModels).ToList();
+
+            var issuesToUpdate = updateIssueViewModels.Where(model => Issues.Any(currentIssues => currentIssues.Key == model.Key));
             foreach (var issueViewModel in issuesToUpdate)
             {
                 var jiraIssueViewModel = Issues.Single(currentIssue => currentIssue.Key == issueViewModel.Key);
@@ -115,7 +135,7 @@ namespace OKNet.App.ViewModel.Jira
                 }
             }
 
-            var newIssues = issueViewModels.OrderByDescending(model => model.Updated)
+            var newIssues = updateIssueViewModels.OrderByDescending(model => model.Updated)
                 .Where(model => Issues.All(viewModel => viewModel.Key != model.Key));
             foreach (var issueViewModel in newIssues)
             {

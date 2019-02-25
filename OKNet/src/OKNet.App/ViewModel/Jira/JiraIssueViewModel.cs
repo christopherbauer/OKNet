@@ -18,6 +18,7 @@ namespace OKNet.App.ViewModel.Jira
         private string _statusCategoryName;
         private string _statusCategoryKey;
         private string _status;
+        private DateTime? _resolutionDate;
 
         public string GetComponent => string.Join(",", Component.Select(model => model.Name));
         public string GetUpdatedHumanReadable => Updated.Humanize(false);
@@ -71,6 +72,12 @@ namespace OKNet.App.ViewModel.Jira
         {
             get => _statusCategoryKey;
             set => _statusCategoryKey = value;
+        }
+
+        public DateTime? ResolutionDate
+        {
+            get => _resolutionDate;
+            set => _resolutionDate = value;
         }
 
         public Dictionary<string, string> StatusColorDictionary => new Dictionary<string, string>

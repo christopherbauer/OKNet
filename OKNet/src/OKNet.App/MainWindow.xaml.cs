@@ -165,6 +165,8 @@ namespace OKNet.App
 
             var lastUpdate = DateTime.Now;
             var refreshRate = jiraConfig.RefreshRate;
+            DateTime lastCleanup = DateTime.MinValue;
+            var cleanupRefreshRate = jiraConfig.CleanupRate;
             var lastPageUpdate = DateTime.Now;
             var pageRotation = jiraConfig.PageRotation;
             var pageRotationRate = jiraConfig.PageRotationRate;
@@ -185,6 +187,15 @@ namespace OKNet.App
                         Logger.Trace($"Try update {Enum.GetName(typeof(JiraStatusCategory),status)}");
                         MakeAsyncRequest(url, apiBase, jiraConfig, new JiraQuery().UpdatedSince(-15, JiraTimeDifference.Minutes).OrderBy("updated"), viewModel, jiraApiService, 0);
                         lastUpdate = DateTime.Now;
+                    }
+                });
+                Dispatcher.Invoke(() =>
+                {
+                    if (DateTime.Now.Subtract(lastCleanup) > TimeSpan.FromSeconds(cleanupRefreshRate))
+                    {
+                        Logger.Trace($"Try cleanup {Enum.GetName(typeof(JiraStatusCategory), status)}");
+                        viewModel.Cleanup();
+                        lastCleanup = DateTime.Now;
                     }
                 });
             };

@@ -24,5 +24,9 @@ namespace OKNet.App.ViewModel
         public virtual void Refresh()
         {
         }
+
+        public virtual void Cleanup()
+        {
+        }
     }
 }

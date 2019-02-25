@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -13,19 +14,7 @@ namespace OKNet.App.ViewModel.Jira
 
         public override void AddOrUpdateNewIssues(IEnumerable<JiraIssueViewModel> issueViewModels)
         {
-            var jiraIssueViewModelList = issueViewModels.ToList();
-            var removeViewModels = jiraIssueViewModelList.Where(model => model.Key != JiraData.StatusCategoryDictionary[JiraStatusCategory.IN_PROGRESS]).ToList();
-            foreach (var viewModel in removeViewModels)
-            {
-                var jiraIssueViewModel = Issues.Single(currentIssue => currentIssue.Key == viewModel.Key);
-                if (!viewModel.Equals(jiraIssueViewModel))
-                {
-                    Issues.Remove(jiraIssueViewModel);
-                }
-            }
-
-            issueViewModels = jiraIssueViewModelList.Except(removeViewModels);
-            base.AddOrUpdateNewIssues(issueViewModels);
+            base.AddOrUpdateNewIssues(issueViewModels, model => model.StatusCategoryKey != JiraData.StatusCategoryDictionary[JiraStatusCategory.IN_PROGRESS]);
         }
     }
 }
