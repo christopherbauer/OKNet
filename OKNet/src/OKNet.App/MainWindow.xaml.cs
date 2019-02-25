@@ -165,8 +165,6 @@ namespace OKNet.App
 
             var lastUpdate = DateTime.Now;
             var refreshRate = jiraConfig.RefreshRate;
-            DateTime lastCleanup = DateTime.MinValue;
-            var cleanupRefreshRate = jiraConfig.CleanupRate;
             var lastPageUpdate = DateTime.Now;
             var pageRotation = jiraConfig.PageRotation;
             var pageRotationRate = jiraConfig.PageRotationRate;

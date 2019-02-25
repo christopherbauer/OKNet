@@ -107,11 +107,11 @@ namespace OKNet.App.ViewModel.Jira
 
         public virtual void AddOrUpdateNewIssues(IEnumerable<JiraIssueViewModel> issueViewModels, Func<JiraIssueViewModel, bool> removalPredicate)
         {
+            var isDirty = false;
             //Efficiency
             var issueViewModelList = issueViewModels.ToList();
 
             var removeIssueViewModels = issueViewModelList.Where(removalPredicate).ToList();
-            var isDirty = false;
             foreach (var viewModel in removeIssueViewModels)
             {
                 var issueViewModel = Issues.SingleOrDefault(currentIssue => currentIssue.Key == viewModel.Key);
