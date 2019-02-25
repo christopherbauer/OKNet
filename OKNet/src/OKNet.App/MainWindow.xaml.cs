@@ -189,15 +189,6 @@ namespace OKNet.App
                         lastUpdate = DateTime.Now;
                     }
                 });
-                Dispatcher.Invoke(() =>
-                {
-                    if (DateTime.Now.Subtract(lastCleanup) > TimeSpan.FromSeconds(cleanupRefreshRate))
-                    {
-                        Logger.Trace($"Try cleanup {Enum.GetName(typeof(JiraStatusCategory), status)}");
-                        viewModel.Cleanup();
-                        lastCleanup = DateTime.Now;
-                    }
-                });
             };
 
         }
