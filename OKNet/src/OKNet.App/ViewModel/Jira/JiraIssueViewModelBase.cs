@@ -102,29 +102,48 @@ namespace OKNet.App.ViewModel.Jira
 
         public virtual void AddOrUpdateNewIssues(IEnumerable<JiraIssueViewModel> issueViewModels)
         {
-            //This could be better but YOLO
-            Logger.Trace($"------- PERF - Begin {nameof(AddOrUpdateNewIssues)}");
-            bool isDirty = false;
-            foreach (var jiraIssueViewModel in issueViewModels)
+            AddOrUpdateNewIssues(issueViewModels, model => false);
+        }
+
+        public virtual void AddOrUpdateNewIssues(IEnumerable<JiraIssueViewModel> issueViewModels, Func<JiraIssueViewModel, bool> removalPredicate)
+        {
+            var isDirty = false;
+            //Efficiency
+            var issueViewModelList = issueViewModels.ToList();
+
+            var removeIssueViewModels = issueViewModelList.Where(removalPredicate).ToList();
+            foreach (var viewModel in removeIssueViewModels)
             {
-                if (Issues.ContainsKey(jiraIssueViewModel.Key))
+                Issues.Remove(viewModel.Key);
+            }
+
+            var updateIssueViewModels = issueViewModelList.Except(removeIssueViewModels).ToList();
+
+            var issuesToUpdate = updateIssueViewModels.Where(model => Issues.Any(currentIssues => currentIssues.Key == model.Key));
+            foreach (var issueViewModel in issuesToUpdate)
+            {
+                if (Issues.ContainsKey(issueViewModel.Key))
                 {
-                    var issueViewModel = Issues[jiraIssueViewModel.Key];
-                    if (!issueViewModel.Equals(jiraIssueViewModel))
-                    {
-                        issueViewModel.Updated = jiraIssueViewModel.Updated;
-                        issueViewModel.StatusCategory = jiraIssueViewModel.StatusCategory;
-                        issueViewModel.Status = jiraIssueViewModel.Status;
-                        issueViewModel.Name = jiraIssueViewModel.Name;
-                        issueViewModel.ProjectId = jiraIssueViewModel.ProjectId;
-                        isDirty = true;
-                    }
+                    Issues[issueViewModel.Key].Updated = issueViewModel.Updated;
+                    Issues[issueViewModel.Key].StatusCategoryKey = issueViewModel.StatusCategoryKey;
+                    Issues[issueViewModel.Key].Status = issueViewModel.Status;
+                    Issues[issueViewModel.Key].Name = issueViewModel.Name;
+                    Issues[issueViewModel.Key].ProjectId = issueViewModel.ProjectId;
+                    isDirty = true;
                 }
                 else
                 {
-                    Issues.Add(jiraIssueViewModel.Key, jiraIssueViewModel);
+                    Issues.Add(issueViewModel.Key, issueViewModel);
                     isDirty = true;
                 }
+            }
+
+            var newIssues = updateIssueViewModels.OrderByDescending(model => model.Updated)
+                .Where(model => Issues.All(viewModel => viewModel.Key != model.Key));
+            foreach (var issueViewModel in newIssues)
+            {
+                Issues.Add(issueViewModel.Key, issueViewModel);
+                isDirty = true;
             }
 
             if (isDirty)

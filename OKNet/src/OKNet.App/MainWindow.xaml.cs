@@ -193,8 +193,9 @@ namespace OKNet.App
 
                     if (DateTime.Now.Subtract(lastUpdate) > TimeSpan.FromSeconds(refreshRate))
                     {
-                        Logger.Trace($"Try update {Enum.GetName(typeof(JiraStatusCategory), status)}");
-                        await MakeAsyncRequest(url, apiBase, jiraConfig, new JiraQuery().StatusCategoryIs(status).UpdatedSince(-15, JiraTimeDifference.Minutes).OrderBy("updated"), viewModel, jiraApiService, 0);
+
+                        Logger.Trace($"Try update {Enum.GetName(typeof(JiraStatusCategory),status)}");
+                        MakeAsyncRequest(url, apiBase, jiraConfig, new JiraQuery().UpdatedSince(-15, JiraTimeDifference.Minutes).OrderBy("updated"), viewModel, jiraApiService, 0);
                         lastUpdate = DateTime.Now;
                     }
                 });

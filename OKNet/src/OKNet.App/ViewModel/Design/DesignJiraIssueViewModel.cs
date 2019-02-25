@@ -10,7 +10,7 @@ namespace OKNet.App.ViewModel.Design
         {
             Key = "OKNET-1";
             Status = "In Development";
-            StatusCategory = "Development";
+            StatusCategoryName = "Development";
             Name = "Create OKNET Kiosk Viewer WPF App";
             ProjectId = 1;
             Component = new ObservableCollection<JiraComponentViewModel>
