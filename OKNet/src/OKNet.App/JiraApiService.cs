@@ -2,15 +2,21 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using OKNet.App.ViewModel;
 using OKNet.App.ViewModel.Jira;
 using OKNet.Core;
 using OKNet.Infrastructure.Jira;
 
 namespace OKNet.App
 {
-    public class JiraApiService
+    public class JiraApiService : ApiRequestService
     {
+        private readonly IConfigService _configService;
+
+        public JiraApiService(IConfigService configService)
+        {
+            _configService = configService;
+        }
+
         public IEnumerable<JiraIssueViewModel> ParseIssues(ApiResponse<APIIssueRequestRoot> issueResult)
         {
             return issueResult.Data.issues.Select(
@@ -24,7 +30,9 @@ namespace OKNet.App
                             Id = Convert.ToInt32(component.id),
                             Name = component.name
                         })),
-                    StatusCategory = model.fields.status.statusCategory.name,
+                    StatusCategoryName = model.fields.status.statusCategory.name,
+                    StatusCategoryKey = model.fields.status.statusCategory.key,
+                    ResolutionDate = model.fields.resolutiondate,
                     Status = model.fields.status.name,
                     ProjectId = Convert.ToInt32(model.fields.project.id),
                     Updated = model.fields.updated
@@ -44,9 +52,9 @@ namespace OKNet.App
                 }));
         }
 
-        public static int GetTotalIssues(ApiResponse<APIIssueRequestRoot> issueResult)
+        public JiraConfig GetJiraConfig(string pathString)
         {
-            return issueResult.Data.total;
+            return _configService.GetConfig<JiraConfig>(pathString);
         }
     }
 }

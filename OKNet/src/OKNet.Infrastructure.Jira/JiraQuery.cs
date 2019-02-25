@@ -1,12 +1,14 @@
-﻿namespace OKNet.Infrastructure.Jira
-{
+﻿using System.Collections.Generic;
+using System.Text;
 
+namespace OKNet.Infrastructure.Jira
+{
     public class JiraQuery
     {
         private string _queryBase = "?jql=";
         private string _queryText;
         private string _additionalTerms;
-
+        
         internal virtual JiraQuery Add(string s)
         {
             if (!string.IsNullOrEmpty(_queryText))

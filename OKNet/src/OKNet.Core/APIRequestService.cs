@@ -8,7 +8,7 @@ namespace OKNet.Core
     public class ApiRequestService
     {
         public ApiResponse<T> MakeRequestWithBasicAuth<T>(Uri baseAddress, string username, string password,
-            string uriQuery, int? startAt = null)
+            string uriQuery)
         {
             var authBase = $"{username}:{password}";
             var encoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(authBase));
@@ -17,9 +17,7 @@ namespace OKNet.Core
 
             var client = new HttpClient {BaseAddress = baseAddress};
             client.DefaultRequestHeaders.Add("Authorization", basicAuth);
-            var requestUri = uriQuery;
-            if (startAt.HasValue) requestUri += $"&startAt={startAt}";
-            var response = client.GetAsync(requestUri).Result;
+            var response = client.GetAsync(uriQuery).Result;
 
             if (response.IsSuccessStatusCode)
             {
