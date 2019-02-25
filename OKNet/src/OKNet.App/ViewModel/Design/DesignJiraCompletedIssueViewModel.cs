@@ -19,6 +19,7 @@ namespace OKNet.App.ViewModel.Design
                 new JiraProjectViewModel { Id = 3, Name = "OKNETJira", Key = "OKJira" },
                 new JiraProjectViewModel { Id = 4, Name = "OKNETCommon", Key = "OKCMN" }
             };
+
             AddOrUpdateNewIssues(new List<JiraIssueViewModel>
             {
                 new DesignJiraIssueViewModel(),
@@ -43,7 +44,6 @@ namespace OKNet.App.ViewModel.Design
             _executions++;
             return DateTime.Now.AddMinutes(-_executions * _random.Next(3, 20));
         }
-
         private JiraIssueViewModel GetIssueViewModel(string key, string name, int projectId,
             List<JiraComponentViewModel> componentViewModels)
         {

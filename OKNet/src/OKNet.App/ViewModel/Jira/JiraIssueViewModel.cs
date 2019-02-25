@@ -15,8 +15,10 @@ namespace OKNet.App.ViewModel.Jira
         private ObservableCollection<JiraComponentViewModel> _component;
         private int _projectId;
         private DateTime _updated;
-        private string _statusCategory;
+        private string _statusCategoryName;
+        private string _statusCategoryKey;
         private string _status;
+        private DateTime? _resolutionDate;
 
         public string GetComponent => string.Join(",", Component.Select(model => model.Name));
         public string GetUpdatedHumanReadable => Updated.Humanize(false);
@@ -53,16 +55,29 @@ namespace OKNet.App.ViewModel.Jira
             set => SetValue(ref _updated, value);
         }
 
-        public string StatusCategory
+        public string StatusCategoryName
         {
-            get => _statusCategory;
-            set => SetValue(ref _statusCategory, value);
+            get => _statusCategoryName;
+            set => SetValue(ref _statusCategoryName, value);
         }
+
 
         public string Status
         {
             get => _status;
             set => SetValue(ref _status, value);
+        }
+
+        public string StatusCategoryKey
+        {
+            get => _statusCategoryKey;
+            set => _statusCategoryKey = value;
+        }
+
+        public DateTime? ResolutionDate
+        {
+            get => _resolutionDate;
+            set => _resolutionDate = value;
         }
 
         public Dictionary<string, string> StatusColorDictionary => new Dictionary<string, string>
@@ -86,7 +101,7 @@ namespace OKNet.App.ViewModel.Jira
 //                   EqualityComparer<ObservableCollection<JiraComponentViewModel>>.Default.Equals(_component, model._component) &&
                    _projectId == model._projectId &&
                    _updated == model._updated &&
-                   _statusCategory == model._statusCategory &&
+                   _statusCategoryName == model._statusCategoryName &&
                    _status == model._status;
         }
 

@@ -18,7 +18,7 @@ namespace OKNet.App.ViewModel.Design
                 new DesignJiraIssueViewModel(),
                 new JiraIssueViewModel
                 {
-                    Key = "OKNET-100", Name = "OKNET Jira In Progress", ProjectId = 1, StatusCategory = "Development",
+                    Key = "OKNET-100", Name = "OKNET Jira In Progress", ProjectId = 1, StatusCategoryName = "Development",
                     Updated = DateTime.UtcNow.AddHours(-3),
                     Component = new ObservableCollection<JiraComponentViewModel> {new JiraComponentViewModel {Id = 1, Name = "OKNET"}}
                 }
