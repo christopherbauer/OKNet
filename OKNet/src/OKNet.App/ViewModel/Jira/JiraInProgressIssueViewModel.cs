@@ -12,6 +12,17 @@ namespace OKNet.App.ViewModel.Jira
 
         public override string GetIssue => $"{IssuesTotal} issue(s) In Progress";
 
+        public override void Cleanup()
+        {
+            var removeIssues = Issues.Values.Where(model => DateTime.Now.Subtract(model.Updated) > TimeSpan.FromDays(30));
+            foreach (var jiraIssueViewModel in removeIssues)
+            {
+                Issues.Remove(jiraIssueViewModel.Key);
+            }
+
+            base.Cleanup();
+        }
+
         public override void AddOrUpdateNewIssues(IEnumerable<JiraIssueViewModel> issueViewModels)
         {
             base.AddOrUpdateNewIssues(issueViewModels, model => model.StatusCategoryKey != JiraData.StatusCategoryDictionary[JiraStatusCategory.IN_PROGRESS]);
