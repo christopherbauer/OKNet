@@ -13,7 +13,7 @@ namespace OKNet.App.ViewModel.Jira
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private Dictionary<string, JiraIssueViewModel> _issues = new Dictionary<string, JiraIssueViewModel>();
-        private ObservableCollection<JiraProjectViewModel> _projects;
+        private ObservableCollection<JiraProjectViewModel> _projects = new ObservableCollection<JiraProjectViewModel>();
         private int _issuesTotal;
         private int _page = 1;
         private int _pageSize = 25;
