@@ -124,11 +124,7 @@ namespace OKNet.App.ViewModel.Jira
             {
                 if (Issues.ContainsKey(issueViewModel.Key))
                 {
-                    Issues[issueViewModel.Key].Updated = issueViewModel.Updated;
-                    Issues[issueViewModel.Key].StatusCategoryKey = issueViewModel.StatusCategoryKey;
-                    Issues[issueViewModel.Key].Status = issueViewModel.Status;
-                    Issues[issueViewModel.Key].Name = issueViewModel.Name;
-                    Issues[issueViewModel.Key].ProjectId = issueViewModel.ProjectId;
+                    Issues[issueViewModel.Key] = issueViewModel;
                     isDirty = true;
                 }
                 else
