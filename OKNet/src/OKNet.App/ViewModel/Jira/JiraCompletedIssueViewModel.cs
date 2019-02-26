@@ -16,7 +16,7 @@ namespace OKNet.App.ViewModel.Jira
 
         public override void Cleanup()
         {
-            var removeIssues = Issues.Values.Where(model => model.ResolutionDate.HasValue && DateTime.Now.Subtract(model.ResolutionDate.Value) > TimeSpan.FromHours(24)).ToList();
+            var removeIssues = Issues.Values.Where(model => model.ResolutionDate.HasValue && model.ResolutionDate.Value.Date < DateTime.Today.Date).ToList();
             foreach (var jiraIssueViewModel in removeIssues)
             {
                 Issues.Remove(jiraIssueViewModel.Key);
