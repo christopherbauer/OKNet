@@ -21,6 +21,10 @@ namespace OKNet.App.ViewModel
             handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        public virtual void Cleanup()
+        {
+        }
+
         public virtual void Refresh()
         {
         }

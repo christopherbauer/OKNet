@@ -177,12 +177,19 @@ namespace OKNet.App
             var lastUpdate = DateTime.Now;
             var refreshRate = jiraConfig.RefreshRate;
             var lastPageUpdate = DateTime.Now;
+            var lastCleanup = DateTime.Now;
             var pageRotation = jiraConfig.PageRotation;
             var pageRotationRate = jiraConfig.PageRotationRate;
             AppHeartbeatTimer.Elapsed += delegate
             {
                 Dispatcher.Invoke(async () =>
                 {
+                    if (DateTime.Now.Subtract(lastCleanup) > TimeSpan.FromHours(1))
+                    {
+                        viewModel.Cleanup();
+                        lastCleanup = DateTime.Now;
+                    }
+
                     if (pageRotation)
                         if (DateTime.Now.Subtract(lastPageUpdate) > TimeSpan.FromSeconds(pageRotationRate))
                         {
