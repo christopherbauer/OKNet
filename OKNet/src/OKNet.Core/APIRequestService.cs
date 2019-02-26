@@ -2,12 +2,13 @@
 using System.IO;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace OKNet.Core
 {
     public class ApiRequestService
     {
-        public ApiResponse<T> MakeRequestWithBasicAuth<T>(Uri baseAddress, string username, string password,
+        public async Task<ApiResponse<T>> MakeRequestWithBasicAuthAsync<T>(Uri baseAddress, string username, string password,
             string uriQuery)
         {
             var authBase = $"{username}:{password}";
@@ -21,7 +22,7 @@ namespace OKNet.Core
 
             if (response.IsSuccessStatusCode)
             {
-                var data = response.Content.ReadAsStringAsync().Result;
+                var data = await response.Content.ReadAsStringAsync();
                 return new ApiResponse<T>((int) response.StatusCode, data);
             }
 
