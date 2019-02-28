@@ -10,13 +10,6 @@ namespace OKNet.App
 {
     public class JiraApiService : ApiRequestService
     {
-        private readonly IConfigService _configService;
-
-        public JiraApiService(IConfigService configService)
-        {
-            _configService = configService;
-        }
-
         public IEnumerable<JiraIssueViewModel> ParseIssues(ApiResponse<APIIssueRequestRoot> issueResult)
         {
             return issueResult.Data.issues.Select(
