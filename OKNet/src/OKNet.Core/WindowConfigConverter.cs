@@ -7,8 +7,12 @@ using Type = System.Type;
 
 namespace OKNet.Core
 {
+    /// <summary>
+    /// Custom configuration for deserializing the window config
+    /// </summary>
     public class WindowConfigConverter : JsonConverter
     {
+        //Props https://stackoverflow.com/a/46175763/82333
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             //We don't currently write configs
