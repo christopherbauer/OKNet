@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,14 +37,15 @@ namespace OKNet.App
         public MainWindow()
         {
             _configService = new ConfigService();
-            _jiraApiService = new JiraApiService(_configService);
+            _jiraApiService = new JiraApiService();
             _apiRequestService = new ApiRequestService();
 
             InitializeComponent();
 
             AppHeartbeatTimer.Start();
 
-            var applicationConfig = _configService.GetConfig<ApplicationConfig>("appsettings.development.json");
+            var files = Directory.GetFiles(".", "appsettings*.json");
+            var applicationConfig = _configService.GetConfig<ApplicationConfig>(files.First());
             var windowViewModel = new WindowViewModel
                 {Windows = new ObservableCollection<ViewModelBase>(), IsDebugMode = applicationConfig.IsDebugMode};
             DataContext = windowViewModel;
