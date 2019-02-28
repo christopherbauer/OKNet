@@ -51,10 +51,5 @@ namespace OKNet.App
                     Width = (int) (Math.Floor(parentWidth / 3m) - 4)
                 }));
         }
-
-        public JiraConfig GetJiraConfig(string pathString)
-        {
-            return _configService.GetConfig<JiraConfig>(pathString);
-        }
     }
 }

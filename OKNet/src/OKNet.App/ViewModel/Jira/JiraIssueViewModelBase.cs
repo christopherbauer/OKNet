@@ -12,11 +12,12 @@ namespace OKNet.App.ViewModel.Jira
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private ObservableCollection<JiraIssueViewModel> _issues = new ObservableCollection<JiraIssueViewModel>();
-        private ObservableCollection<JiraProjectViewModel> _projects;
+        private Dictionary<string, JiraIssueViewModel> _issues = new Dictionary<string, JiraIssueViewModel>();
+        private ObservableCollection<JiraProjectViewModel> _projects = new ObservableCollection<JiraProjectViewModel>();
         private int _issuesTotal;
         private int _page = 1;
         private int _pageSize = 25;
+        private Dictionary<string, string> _statusColors;
         public ICommand TurnPageCommand;
 
         public JiraIssueViewModelBase()
@@ -26,7 +27,6 @@ namespace OKNet.App.ViewModel.Jira
                 var newPage = (Page < TotalPages ? Page + 1 : 1);
                 Logger.Trace($"Set page from {Page} to {newPage} ({GetType().Name})");
                 Page = newPage;
-
             }, o => true);
         }
         public int IssuesTotal
@@ -35,7 +35,7 @@ namespace OKNet.App.ViewModel.Jira
             set => SetValue(ref _issuesTotal, value);
         }
 
-        public ObservableCollection<JiraIssueViewModel> Issues
+        public Dictionary<string, JiraIssueViewModel> Issues
         {
             get => _issues;
             set => SetValue(ref _issues, value);
@@ -66,7 +66,7 @@ namespace OKNet.App.ViewModel.Jira
         {
             get
             {
-                return new ObservableCollection<JiraIssueViewModel>(Issues.OrderByDescending(model => model.Updated)
+                return new ObservableCollection<JiraIssueViewModel>(Issues.Values.OrderByDescending(model => model.Updated)
                     .Skip((Page-1) * PageSize).Take(PageSize).ToList());
             }
         }
@@ -100,6 +100,16 @@ namespace OKNet.App.ViewModel.Jira
             }
         }
 
+        public Dictionary<string, string> StatusColors
+        {
+            get => _statusColors;
+            set
+            {
+                SetValue(ref _statusColors, value);
+                Refresh();
+            }
+        }
+
         public virtual void AddOrUpdateNewIssues(IEnumerable<JiraIssueViewModel> issueViewModels)
         {
             AddOrUpdateNewIssues(issueViewModels, model => false);
@@ -114,12 +124,7 @@ namespace OKNet.App.ViewModel.Jira
             var removeIssueViewModels = issueViewModelList.Where(removalPredicate).ToList();
             foreach (var viewModel in removeIssueViewModels)
             {
-                var issueViewModel = Issues.SingleOrDefault(currentIssue => currentIssue.Key == viewModel.Key);
-                if (issueViewModel != null && !viewModel.Equals(issueViewModel))
-                {
-                    Issues.Remove(issueViewModel);
-                    isDirty = true;
-                }
+                Issues.Remove(viewModel.Key);
             }
 
             var updateIssueViewModels = issueViewModelList.Except(removeIssueViewModels).ToList();
@@ -127,10 +132,14 @@ namespace OKNet.App.ViewModel.Jira
             var issuesToUpdate = updateIssueViewModels.Where(model => Issues.Any(currentIssues => currentIssues.Key == model.Key));
             foreach (var issueViewModel in issuesToUpdate)
             {
-                var jiraIssueViewModel = Issues.Single(currentIssue => currentIssue.Key == issueViewModel.Key);
-                if(!issueViewModel.Equals(jiraIssueViewModel))
+                if (Issues.ContainsKey(issueViewModel.Key))
                 {
-                    Issues.Remove(jiraIssueViewModel);
+                    Issues[issueViewModel.Key] = issueViewModel;
+                    isDirty = true;
+                }
+                else
+                {
+                    Issues.Add(issueViewModel.Key, issueViewModel);
                     isDirty = true;
                 }
             }
@@ -139,7 +148,7 @@ namespace OKNet.App.ViewModel.Jira
                 .Where(model => Issues.All(viewModel => viewModel.Key != model.Key));
             foreach (var issueViewModel in newIssues)
             {
-                Issues.Add(issueViewModel);
+                Issues.Add(issueViewModel.Key, issueViewModel);
                 isDirty = true;
             }
 
@@ -154,23 +163,33 @@ namespace OKNet.App.ViewModel.Jira
                 OnPropertyChanged(nameof(GetVisibleIssues));
                 OnPropertyChanged(nameof(GetIssue));
             }
+            Logger.Trace($"------- PERF - End {nameof(AddOrUpdateNewIssues)}");
         }
 
         private void RefreshProjectCounts()
         {
             foreach (var projectViewModel in Projects)
             {
-                projectViewModel.Count = Issues.Count(viewModel =>
+                projectViewModel.Count = Issues.Values.Count(viewModel =>
                     viewModel.ProjectId == Convert.ToInt32(projectViewModel.Id));
+            }
+        }
+
+        public void SetupIssueColors()
+        {
+            foreach (var issue in Issues)
+            {
+                issue.Value.StatusColor = StatusColors != null && StatusColors.ContainsKey(issue.Value.Status) ? StatusColors[issue.Value.Status] : "Silver";
             }
         }
 
         public override void Refresh()
         {
             RefreshProjectCounts();
+            SetupIssueColors();
             foreach (var issueViewModel in Issues)
             {
-                issueViewModel.Refresh();
+                issueViewModel.Value.Refresh();
             }
         }
     }

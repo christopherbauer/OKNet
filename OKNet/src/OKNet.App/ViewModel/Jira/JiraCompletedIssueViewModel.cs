@@ -14,6 +14,16 @@ namespace OKNet.App.ViewModel.Jira
             base.AddOrUpdateNewIssues(issueViewModels, model => !model.ResolutionDate.HasValue || model.StatusCategoryKey != JiraData.StatusCategoryDictionary[JiraStatusCategory.COMPLETE]);
         }
 
+        public override void Cleanup()
+        {
+            var removeIssues = Issues.Values.Where(model => model.ResolutionDate.HasValue && model.ResolutionDate.Value.Date < DateTime.Today.Date).ToList();
+            foreach (var jiraIssueViewModel in removeIssues)
+            {
+                Issues.Remove(jiraIssueViewModel.Key);
+            }
+            base.Cleanup();
+        }
+
         public override string GetIssue => $"{IssuesTotal} issue(s) Done today";
     }
 }
