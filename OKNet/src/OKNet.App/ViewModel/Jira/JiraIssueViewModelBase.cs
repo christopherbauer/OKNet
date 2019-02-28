@@ -27,7 +27,6 @@ namespace OKNet.App.ViewModel.Jira
                 var newPage = (Page < TotalPages ? Page + 1 : 1);
                 Logger.Trace($"Set page from {Page} to {newPage} ({GetType().Name})");
                 Page = newPage;
-
             }, o => true);
         }
         public int IssuesTotal
