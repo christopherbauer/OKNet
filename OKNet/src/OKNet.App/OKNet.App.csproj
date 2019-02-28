@@ -139,7 +139,6 @@
     <Compile Include="ViewModel\WindowConfigViewModel.cs" />
     <Compile Include="ViewModel\WindowViewModel.cs" />
     <Compile Include="WebBrowserBehaviors.cs" />
-    <Compile Include="WindowConfigConverter.cs" />
     <Page Include="UserControl\Jira\JiraIssueStatusView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

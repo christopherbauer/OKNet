@@ -19,10 +19,10 @@ namespace OKNet.App.ViewModel.Jira
         private string _statusCategoryKey;
         private string _status;
         private DateTime? _resolutionDate;
+        private string _statusColor;
 
         public string GetComponent => string.Join(",", Component.Select(model => model.Name));
         public string GetUpdatedHumanReadable => Updated.Humanize(false);
-        public string StatusColor => StatusColorDictionary.ContainsKey(Status) ? StatusColorDictionary[Status] : "Silver";
         public ICommand UpdatedCommand => new DelegateCommand(() => OnPropertyChanged(nameof(GetUpdatedHumanReadable)), o => true);
 
         public string Name
@@ -80,17 +80,11 @@ namespace OKNet.App.ViewModel.Jira
             set => _resolutionDate = value;
         }
 
-        public Dictionary<string, string> StatusColorDictionary => new Dictionary<string, string>
+        public string StatusColor
         {
-            { "To Do", "Silver" },
-            { "Ready for dev", "Silver" },
-            { "In Dev", "LightGreen" },
-            { "Code Review", "LimeGreen" },
-            { "Ready for QA", "PaleGoldenrod" },
-            { "In QA", "Gold" },
-            { "PM review", "LightSkyBlue" },
-            { "Ready for business", "LightSkyBlue" },
-        };
+            get => _statusColor;
+            set => SetValue(ref _statusColor, value);
+        }
 
         public override bool Equals(object obj)
         {

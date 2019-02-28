@@ -20,6 +20,12 @@ namespace OKNet.App
     /// </summary>
     public partial class MainWindow : Window
     {
+        public class ApplicationConfig
+        {
+            public bool IsDebugMode { get; set; }
+            public WindowConfig[] Windows { get; set; }
+        }
+
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private Timer AppHeartbeatTimer = new Timer { Interval = (int)TimeSpan.FromSeconds(5).TotalMilliseconds };
@@ -37,30 +43,26 @@ namespace OKNet.App
 
             AppHeartbeatTimer.Start();
 
-            var isDebugMode = _configService.Get<bool>("isDebugMode");
-            Logger.Debug($"Initializing BEGIN {nameof(WindowViewModel)}");
-            var windowViewModel = new WindowViewModel { Windows = new ObservableCollection<ViewModelBase>(), IsDebugMode = isDebugMode };
+            var windowViewModel = new WindowViewModel();
             DataContext = windowViewModel;
-            Logger.Debug($"Initializing END {nameof(WindowViewModel)}");
 
             Dispatcher.InvokeAsync(() => InitialLoad(windowViewModel));
         }
 
         private async Task InitialLoad(WindowViewModel windowViewModel)
         {
+            var applicationConfig = _configService.GetConfig<ApplicationConfig>("appsettings.development.json");
 
-            var names = _configService.GetNames("windows").ToList();
-            var windowConfigViewModels = new List<ViewModelBase>();
-            for (var i = 0; i < names.Count(); i++)
+            for (var i = 0; i < applicationConfig.Windows.Count(); i++)
             {
-                var pathString = $"windows:{names[i]}";
-                var windowConfig = _configService.GetConfig<WindowConfig>(pathString);
+                var windowConfig = applicationConfig.Windows[i];
+                var pathString = $"Initialize Window {windowConfig.Type}";
                 Logger.Debug($"Configuring from config path '{pathString}' type of {windowConfig.Type}");
 
                 if (windowConfig.Type == "web")
                 {
-                    var websiteConfig = _configService.GetConfig<WebsiteConfig>(pathString);
-                    windowConfigViewModels.Add(new BasicWebsiteViewModel
+                    var websiteConfig = (WebsiteConfig) windowConfig;
+                    windowViewModel.Windows.Add(new BasicWebsiteViewModel
                     {
                         Uri = websiteConfig.Uri,
                         Type = websiteConfig.Type,
@@ -73,7 +75,7 @@ namespace OKNet.App
                     var initialJiraQuery = new JiraQuery().StatusCategoryIs(JiraStatusCategory.IN_PROGRESS).UpdatedSince(-30, JiraTimeDifference.Days).OrderBy("updated");
 
                     Logger.Debug($"Initializing BEGIN {nameof(JiraInProgressIssueViewModel)}");
-                    var viewModel = await InitializeJiraIssueViewModel<JiraInProgressIssueViewModel>(pathString, initialJiraQuery, JiraStatusCategory.IN_PROGRESS);
+                    var viewModel = await InitializeJiraIssueViewModel<JiraInProgressIssueViewModel>((JiraConfig)windowConfig, initialJiraQuery, JiraStatusCategory.IN_PROGRESS);
                     windowViewModel.Windows.Add(viewModel);
                     Logger.Debug($"Initializing END {nameof(JiraInProgressIssueViewModel)}");
                 }
@@ -82,7 +84,7 @@ namespace OKNet.App
                     var initialJiraQuery = new JiraQuery().ResolvedSince(DateTime.Today).StatusCategoryIs(JiraStatusCategory.COMPLETE).OrderBy("updated");
 
                     Logger.Debug($"Initializing BEGIN {nameof(JiraCompletedIssueViewModel)}");
-                    var viewModel = await InitializeJiraIssueViewModel<JiraCompletedIssueViewModel>(pathString, initialJiraQuery, JiraStatusCategory.COMPLETE);
+                    var viewModel = await InitializeJiraIssueViewModel<JiraCompletedIssueViewModel>((JiraConfig)windowConfig, initialJiraQuery, JiraStatusCategory.COMPLETE);
                     windowViewModel.Windows.Add(viewModel);
                     Logger.Debug($"Initializing END {nameof(JiraCompletedIssueViewModel)}");
                 }
@@ -96,10 +98,9 @@ namespace OKNet.App
             AppHeartbeatTimer.Elapsed += (sender, args) => Dispatcher.Invoke(RefreshHierarchy);
         }
 
-        private async Task<WindowConfigViewModel> InitializeJiraIssueViewModel<T>(string pathString, JiraQuery jiraQuery,
+        private async Task<WindowConfigViewModel> InitializeJiraIssueViewModel<T>(JiraConfig jiraConfig, JiraQuery jiraQuery,
             JiraStatusCategory jiraStatusCategory) where T : JiraIssueViewModelBase, new()
         {
-            var jiraConfig = _jiraApiService.GetJiraConfig(pathString);
             string url = $"https://{jiraConfig.ApiHost}";
             var jiraConfigPassword = Encoding.UTF8.GetString(Convert.FromBase64String(jiraConfig.Password));
             var projectsResult = await _apiRequestService.MakeRequestWithBasicAuthAsync<List<ProjectApiModel>>(new Uri($"{url}/project"),
@@ -109,7 +110,8 @@ namespace OKNet.App
             {
                 Width = jiraConfig.Width,
                 Height = jiraConfig.Height,
-                PageSize = jiraConfig.PageSize
+                PageSize = jiraConfig.PageSize,
+                StatusColors = jiraConfig.StatusColors
             };
 
             if (projectsResult.StatusCode == 200)

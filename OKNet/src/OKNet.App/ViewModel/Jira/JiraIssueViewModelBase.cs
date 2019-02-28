@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using NLog;
+using NLog.Internal;
 using OKNet.App.Command;
 
 namespace OKNet.App.ViewModel.Jira
@@ -17,7 +18,9 @@ namespace OKNet.App.ViewModel.Jira
         private int _issuesTotal;
         private int _page = 1;
         private int _pageSize = 25;
+        private Dictionary<string, string> _statusColors;
         public ICommand TurnPageCommand;
+
 
         public JiraIssueViewModelBase()
         {
@@ -29,6 +32,7 @@ namespace OKNet.App.ViewModel.Jira
 
             }, o => true);
         }
+
         public int IssuesTotal
         {
             get => _issuesTotal;
@@ -40,6 +44,17 @@ namespace OKNet.App.ViewModel.Jira
             get => _issues;
             set => SetValue(ref _issues, value);
         }
+
+        private Dictionary<string, string> _statusColorDictionary;
+        public Dictionary<string, string> StatusColorDictionary
+        {
+            get => _statusColorDictionary;
+            set
+            {
+                SetValue(ref _statusColorDictionary, value);
+            }
+        }
+
 
         public ObservableCollection<JiraProjectViewModel> Projects
         {
@@ -74,6 +89,7 @@ namespace OKNet.App.ViewModel.Jira
         public virtual ObservableCollection<JiraProjectViewModel> GetVisibleProjects => new ObservableCollection<JiraProjectViewModel>(Projects.ToList());
         public virtual string GetIssue => $"{IssuesTotal}";
 
+
         public int PageSize
         {
             get => _pageSize;
@@ -97,6 +113,16 @@ namespace OKNet.App.ViewModel.Jira
                 }
 
                 return 1;
+            }
+        }
+
+        public Dictionary<string, string> StatusColors
+        {
+            get => _statusColors;
+            set
+            {
+                SetValue(ref _statusColors, value);
+                Refresh();
             }
         }
 
@@ -165,9 +191,18 @@ namespace OKNet.App.ViewModel.Jira
             }
         }
 
+        public void SetupIssueColors()
+        {
+            foreach (var issue in Issues)
+            {
+                issue.Value.StatusColor = StatusColorDictionary != null && StatusColorDictionary.ContainsKey(issue.Value.Status) ? StatusColorDictionary[issue.Value.Status] : "Silver";
+            }
+        }
+
         public override void Refresh()
         {
             RefreshProjectCounts();
+            SetupIssueColors();
             foreach (var issueViewModel in Issues)
             {
                 issueViewModel.Value.Refresh();

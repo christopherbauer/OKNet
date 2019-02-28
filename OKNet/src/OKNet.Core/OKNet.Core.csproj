@@ -59,6 +59,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StreamApiResponse.cs" />
     <Compile Include="WebsiteConfig.cs" />
+    <Compile Include="WindowConfigConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -68,6 +69,10 @@
     <ProjectReference Include="..\OKNet.Common\OKNet.Common.csproj">
       <Project>{F9925D93-8C35-41BA-B122-99349C603D13}</Project>
       <Name>OKNet.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OKNet.Infrastructure.Jira\OKNet.Infrastructure.Jira.csproj">
+      <Project>{5EE0EE68-D407-4EB4-838E-1C7CCEBDF82F}</Project>
+      <Name>OKNet.Infrastructure.Jira</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -7,7 +7,7 @@
      xmlns:app="clr-namespace:OKNet.App"
      xmlns:jira="clr-namespace:OKNet.App.UserControl.Jira"
      mc:Ignorable="d"
-     d:DataContext="{d:DesignInstance design:DesignJiraInProgressIssueViewModel, IsDesignTimeCreatable=True}" Background="White">
+     d:DataContext="{d:DesignInstance design:DesignJiraInProgressIssueViewModel, IsDesignTimeCreatable=True}" Background="White" Width="802">
     <Viewbox MaxWidth="{Binding Width}">
         <StackPanel Orientation="Vertical">
             <TextBlock Text="JIRA In Progress (Last 30d) Issues" FontSize="22px" HorizontalAlignment="Center"></TextBlock>
