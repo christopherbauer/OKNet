@@ -20,7 +20,6 @@ namespace OKNet.App
     /// </summary>
     public partial class MainWindow : Window
     {
-
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private Timer AppHeartbeatTimer = new Timer { Interval = (int)TimeSpan.FromSeconds(5).TotalMilliseconds };
@@ -201,7 +200,6 @@ namespace OKNet.App
 
                     if (DateTime.Now.Subtract(lastUpdate) > TimeSpan.FromSeconds(refreshRate))
                     {
-
                         Logger.Trace($"Try update {Enum.GetName(typeof(JiraStatusCategory),status)}");
                         MakeAsyncRequest(url, apiBase, jiraConfig, new JiraQuery().UpdatedSince(-15, JiraTimeDifference.Minutes).OrderBy("updated"), viewModel, jiraApiService, 0);
                         lastUpdate = DateTime.Now;

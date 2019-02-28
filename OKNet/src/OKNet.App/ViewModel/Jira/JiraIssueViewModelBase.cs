@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using NLog;
-using NLog.Internal;
 using OKNet.App.Command;
 
 namespace OKNet.App.ViewModel.Jira
@@ -21,7 +20,6 @@ namespace OKNet.App.ViewModel.Jira
         private Dictionary<string, string> _statusColors;
         public ICommand TurnPageCommand;
 
-
         public JiraIssueViewModelBase()
         {
             TurnPageCommand = new DelegateCommand(() =>
@@ -32,7 +30,6 @@ namespace OKNet.App.ViewModel.Jira
 
             }, o => true);
         }
-
         public int IssuesTotal
         {
             get => _issuesTotal;
@@ -77,7 +74,6 @@ namespace OKNet.App.ViewModel.Jira
 
         public virtual ObservableCollection<JiraProjectViewModel> GetVisibleProjects => new ObservableCollection<JiraProjectViewModel>(Projects.ToList());
         public virtual string GetIssue => $"{IssuesTotal}";
-
 
         public int PageSize
         {
