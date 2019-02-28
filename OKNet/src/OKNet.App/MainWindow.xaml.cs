@@ -9,7 +9,6 @@ using System.Windows;
 using NLog;
 using OKNet.App.ViewModel;
 using OKNet.App.ViewModel.Jira;
-using OKNet.Common;
 using OKNet.Core;
 using OKNet.Infrastructure.Jira;
 using Timer = System.Timers.Timer;
@@ -21,11 +20,6 @@ namespace OKNet.App
     /// </summary>
     public partial class MainWindow : Window
     {
-        public class ApplicationConfig
-        {
-            public bool IsDebugMode { get; set; }
-            public WindowConfig[] Windows { get; set; }
-        }
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
