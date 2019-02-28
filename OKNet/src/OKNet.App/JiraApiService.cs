@@ -10,13 +10,6 @@ namespace OKNet.App
 {
     public class JiraApiService : ApiRequestService
     {
-        private readonly IConfigService _configService;
-
-        public JiraApiService(IConfigService configService)
-        {
-            _configService = configService;
-        }
-
         public IEnumerable<JiraIssueViewModel> ParseIssues(ApiResponse<APIIssueRequestRoot> issueResult)
         {
             return issueResult.Data.issues.Select(
@@ -50,11 +43,6 @@ namespace OKNet.App
                     Id = Convert.ToInt32(model.id),
                     Width = (int) (Math.Floor(parentWidth / 3m) - 4)
                 }));
-        }
-
-        public JiraConfig GetJiraConfig(string pathString)
-        {
-            return _configService.GetConfig<JiraConfig>(pathString);
         }
     }
 }
