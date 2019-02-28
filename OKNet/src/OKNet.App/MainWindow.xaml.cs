@@ -43,16 +43,19 @@ namespace OKNet.App
 
             AppHeartbeatTimer.Start();
 
-            var windowViewModel = new WindowViewModel();
+            var applicationConfig = _configService.GetConfig<ApplicationConfig>("appsettings.development.json");
+            var windowViewModel = new WindowViewModel
+                {Windows = new ObservableCollection<ViewModelBase>(), IsDebugMode = applicationConfig.IsDebugMode};
             DataContext = windowViewModel;
 
-            Dispatcher.InvokeAsync(() => InitialLoad(windowViewModel));
+            Dispatcher.InvokeAsync(() =>
+            {
+                return InitialLoad(windowViewModel, applicationConfig);
+            });
         }
 
-        private async Task InitialLoad(WindowViewModel windowViewModel)
+        private async Task InitialLoad(WindowViewModel windowViewModel, ApplicationConfig applicationConfig)
         {
-            var applicationConfig = _configService.GetConfig<ApplicationConfig>("appsettings.development.json");
-
             for (var i = 0; i < applicationConfig.Windows.Count(); i++)
             {
                 var windowConfig = applicationConfig.Windows[i];

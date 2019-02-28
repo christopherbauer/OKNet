@@ -45,17 +45,6 @@ namespace OKNet.App.ViewModel.Jira
             set => SetValue(ref _issues, value);
         }
 
-        private Dictionary<string, string> _statusColorDictionary;
-        public Dictionary<string, string> StatusColorDictionary
-        {
-            get => _statusColorDictionary;
-            set
-            {
-                SetValue(ref _statusColorDictionary, value);
-            }
-        }
-
-
         public ObservableCollection<JiraProjectViewModel> Projects
         {
             get => _projects;
@@ -195,7 +184,7 @@ namespace OKNet.App.ViewModel.Jira
         {
             foreach (var issue in Issues)
             {
-                issue.Value.StatusColor = StatusColorDictionary != null && StatusColorDictionary.ContainsKey(issue.Value.Status) ? StatusColorDictionary[issue.Value.Status] : "Silver";
+                issue.Value.StatusColor = StatusColors != null && StatusColors.ContainsKey(issue.Value.Status) ? StatusColors[issue.Value.Status] : "Silver";
             }
         }
 
